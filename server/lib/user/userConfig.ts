@@ -37,8 +37,7 @@ export const USER_ROUTES: ROUTES = {
     },
     user_session: {
         url: "/user/session"
-    } 
+    }
 };
 
 export const SESSION_TIME = 1000 * 60 * 60 * 24 * 30; // 30 days
-export const SESSION_NAME = "unicorn";

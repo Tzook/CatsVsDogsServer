@@ -8,7 +8,6 @@ import * as mongoose from "mongoose";
 
 declare global {
     // Express
-
     type Express = core.Express
     interface Req extends core.Request {
         user?: USER
@@ -38,6 +37,21 @@ declare global {
         "// matchRegex"?: string
         matchRegex?: RegExp
         defaultValue?: any
+    }
+
+    // Events
+    type SOCKET_EVENTS = {
+        [eventName: string]: SOCKET_EVENT
+    }
+    type SOCKET_EVENT = {
+        name: string,
+    }
+    type EVENTER = (io: SocketIO.Server, socket: SOCK) => void
+
+    // Socket
+    interface SOCK extends SocketIO.Socket {
+        user: USER
+        char: CHAR
     }
 
     // User

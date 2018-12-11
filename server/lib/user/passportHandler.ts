@@ -3,9 +3,10 @@ import expressSession = require('express-session');
 import passport = require('passport');
 import passportLocal = require('passport-local');
 import { getStore } from '../common/db';
-import { SESSION_NAME, SESSION_TIME } from './userConfig';
+import { SESSION_TIME } from './userConfig';
 import { sendError } from '../common/send';
 import { getUser, performLogout } from './userServices';
+import { SESSION_NAME } from '../common/config';
 
 export function initPassport(app: Express) {
     app.use(expressSession({
@@ -14,9 +15,9 @@ export function initPassport(app: Express) {
         store: getStore(),
         cookie: { maxAge: SESSION_TIME, httpOnly: false },
         saveUninitialized: true,
-        resave: true 
+        resave: true
     }));
-    
+
     app.use(passport.initialize());
     app.use((req, res, next) => {
         passport.authenticate('session', {}, (error) => {
@@ -43,7 +44,7 @@ function authenticationHandler() {
             return done(error);
         }
     }));
-    
+
 }
 
 function serializeUserHandler() {
@@ -71,7 +72,7 @@ function deserializeUserHandler() {
 export function passportLocalAuthenticate(req: Req, res: Res, next: Nex) {
     passport.authenticate('local', (error, user) => {
         if (error) {
-           next(error);
+            next(error);
         } else {
             req.body.user = user;
             next();

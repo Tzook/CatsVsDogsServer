@@ -1,6 +1,6 @@
 import { sendSuccess } from "../common/send";
 import { UserModel } from "./userModel";
-import { SESSION_NAME } from './userConfig';
+import { SESSION_NAME } from "../common/config";
 
 export function sendUser(req: Req, res: Res, next: Nex) {
     // clear the password

@@ -9,12 +9,13 @@ import http = require("http");
 import { getEnvVariable } from "./env";
 import { startRouters } from './router';
 import { sendError } from "../common/send";
+import { bootstrapSocketio } from "../socketio/socketioBootstrap";
+import { logger } from '../common/log';
 
 export function bootstrap() {
-    console.log("starting!");
     const app = express();
-    
-    app.use(compression({level: 1}));
+
+    app.use(compression({ level: 1 }));
     app.use(cookieParser());
     app.use(bodyParser.json());
     app.use(cors());
@@ -23,15 +24,15 @@ export function bootstrap() {
     app.set('port', (process.env.PORT || 5000));
 
     mongoose.Promise = global.Promise;
-    mongoose.connect(getEnvVariable("DB_URL"), {useNewUrlParser: true});
+    mongoose.connect(getEnvVariable("DB_URL"), { useNewUrlParser: true });
     mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
     mongoose.connection.once('open', () => {
-        console.info("\t+*+*+ Connected to mongodb! on MongoLab +*+*+");
-		const server = http.createServer(app).listen(app.get('port'));
+        logger("\t+*+*+ Connected to mongodb! on MongoLab +*+*+");
+        const server = http.createServer(app).listen(app.get('port'));
         const io = socketio(server);
-        if (false) console.log("io is here", io);
         startRouters(app);
+        bootstrapSocketio(io);
         app.use(sendError);
     });
 }
