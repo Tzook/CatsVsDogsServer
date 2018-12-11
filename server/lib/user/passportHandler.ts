@@ -68,7 +68,7 @@ function deserializeUserHandler() {
 
 };
 
-export function passportLocalAuthenticate(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function passportLocalAuthenticate(req: Req, res: Res, next: Nex) {
     passport.authenticate('local', (error, user) => {
         if (error) {
            next(error);

@@ -9,9 +9,9 @@ import * as mongoose from "mongoose";
 declare global {
     // Express
     type Express = core.Express
-    type ExpressRequest = core.Request
-    type ExpressResponse = core.Response
-    type ExpressNext = core.NextFunction
+    type Req = core.Request
+    type Res = core.Response
+    type Nex = core.NextFunction
 
     // Mongoose
     type MODEL<T> = mongoose.Model<any>;

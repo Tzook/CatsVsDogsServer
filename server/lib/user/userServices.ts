@@ -2,24 +2,24 @@ import { sendSuccess } from "../common/send";
 import { UserModel } from "./userModel";
 import { SESSION_NAME } from './userConfig';
 
-export function sendUser(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function sendUser(req: Req, res: Res, next: Nex) {
     // clear the password
     req.user.password = undefined;
     sendSuccess(res, req.user);
     next();
 }
 
-export function sendLogout(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function sendLogout(req: Req, res: Res, next: Nex) {
     sendSuccess(res, {});
     next();
 }
 
-export function sendDeleted(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function sendDeleted(req: Req, res: Res, next: Nex) {
     sendSuccess(res, {});
     next();
 }
 
-export function performLogin(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function performLogin(req: Req, res: Res, next: Nex) {
     req.login(req.body.user, error => {
         if (error) {
             next(error);
@@ -29,7 +29,7 @@ export function performLogin(req: ExpressRequest, res: ExpressResponse, next: Ex
     });
 }
 
-export function performLogout(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function performLogout(req: Req, res: Res, next: Nex) {
     req.session.destroy(error => {
         if (error) {
             next(error);
@@ -40,7 +40,7 @@ export function performLogout(req: ExpressRequest, res: ExpressResponse, next: E
     });
 }
 
-export async function isUsernameUnique(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export async function isUsernameUnique(req: Req, res: Res, next: Nex) {
     try {
         const user: USER = await getUser(req.body.username);
         if (!user) {
@@ -57,7 +57,7 @@ export function getUser(username: string): Promise<USER> {
     return UserModel.findOne({username}) as any;
 }
 
-export async function handleNewUser(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export async function handleNewUser(req: Req, res: Res, next: Nex) {
     try {
         const UserObject = new UserModel(req.body);
         const user = await UserObject.save();
@@ -71,7 +71,7 @@ export async function handleNewUser(req: ExpressRequest, res: ExpressResponse, n
     }
 }
 
-export async function handleDeleteUser(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export async function handleDeleteUser(req: Req, res: Res, next: Nex) {
     try {
         await req.user.remove();
         next();

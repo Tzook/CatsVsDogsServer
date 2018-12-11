@@ -1,4 +1,4 @@
-export function isLoggedIn(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+export function isLoggedIn(req: Req, res: Res, next: Nex) {
     if (req.user) {
         next();
     } else {
@@ -7,7 +7,7 @@ export function isLoggedIn(req: ExpressRequest, res: ExpressResponse, next: Expr
 }
 
 export function hasParams(params: ROUTE_PARAMS) {
-    return (req: ExpressRequest, res: ExpressResponse, next: ExpressNext) => {
+    return (req: Req, res: Res, next: Nex) => {
         for (let paramName in params) {
             const paramOptions = params[paramName];
             const param = req.body[paramName];

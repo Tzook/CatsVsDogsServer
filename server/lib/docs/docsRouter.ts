@@ -7,7 +7,7 @@ export function docsRouter(app: Express) {
         sendDocs);
 }
 
-function sendDocs(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
+function sendDocs(req: Req, res: Res, next: Nex) {
     sendSuccess(res, DOCS);
     next();
 }
