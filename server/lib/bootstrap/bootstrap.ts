@@ -8,7 +8,7 @@ import socketio = require("socket.io");
 import http = require("http");
 import { getEnvVariable } from "./env";
 import { startRouters } from './router';
-import { sendError } from "./send";
+import { sendError } from "../common/send";
 
 export function bootstrap() {
     console.log("starting!");
