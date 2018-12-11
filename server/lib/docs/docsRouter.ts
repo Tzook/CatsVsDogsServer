@@ -8,8 +8,6 @@ export function docsRouter(app: Express) {
 }
 
 function sendDocs(req: ExpressRequest, res: ExpressResponse, next: ExpressNext) {
-    sendSuccess(res, {
-        docs: DOCS
-    });
+    sendSuccess(res, DOCS);
     next();
 }
