@@ -6,7 +6,7 @@ const routers: ROUTER[] = [
     charRouter,
 ];
 
-export function startRouters(app: Express.Application) {
+export function startRouters(app: Express) {
     for (const router of routers) {
         router(app);
     }

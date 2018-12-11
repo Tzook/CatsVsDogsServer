@@ -8,6 +8,7 @@ import socketio = require("socket.io");
 import http = require("http");
 import { getEnvVariable } from "./env";
 import { startRouters } from './router';
+import { sendError } from "./send";
 
 export function bootstrap() {
     console.log("starting!");
@@ -22,7 +23,7 @@ export function bootstrap() {
     app.set('port', (process.env.PORT || 5000));
 
     mongoose.Promise = global.Promise;
-    mongoose.connect(getEnvVariable("dbUrl"), {useNewUrlParser: true});
+    mongoose.connect(getEnvVariable("DB_URL"), {useNewUrlParser: true});
     mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
     mongoose.connection.once('open', () => {
@@ -31,5 +32,6 @@ export function bootstrap() {
         const io = socketio(server);
         if (false) console.log("io is here", io);
         startRouters(app);
+        app.use(sendError);
     });
 }

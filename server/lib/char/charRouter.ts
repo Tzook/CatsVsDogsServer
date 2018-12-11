@@ -1,4 +1,4 @@
 
-export function charRouter(app: Express.Application) {
+export function charRouter(app: Express) {
     console.log("char router routing!");
 }
