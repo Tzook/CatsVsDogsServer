@@ -1,5 +1,4 @@
-const config = require("../../../config/.env.json");
-
 export function getEnvVariable(key: string) {
-    return process.env[key] ? process.env[key] : config[key];
+    // require is on demand since the server shouldn't have that file and exists locally only
+    return process.env[key] ? process.env[key] : require("../../../config/.env.json")[key];
 }
