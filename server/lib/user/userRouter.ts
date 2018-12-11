@@ -1,18 +1,19 @@
 import { USER_ROUTES } from './userConfig';
-import { sendUser, isUsernameUnique, handleNewUser, performLogin, performLogout, sendLogout, handleDeleteUser, sendDeleted } from './userServices';
+import { sendUser, isUsernameUnique, handleNewUser, performLogin, performLogout, handleDeleteUser } from './userServices';
 import { isLoggedIn, hasParams } from '../common/validation';
 import { initPassport, passportLocalAuthenticate } from './passportHandler';
+import { sendSuccessResponse } from '../common/send';
 
 export function userRouter(app: Express) {
     initPassport(app);
 
-    app.get(USER_ROUTES.user_session.url, 
-        isLoggedIn, 
+    app.get(USER_ROUTES.user_session.url,
+        isLoggedIn,
         sendUser);
 
     app.get(USER_ROUTES.user_logout.url,
         performLogout,
-        sendLogout);
+        sendSuccessResponse);
 
     app.post(USER_ROUTES.user_login.url,
         hasParams(USER_ROUTES.user_login.params),
@@ -20,7 +21,7 @@ export function userRouter(app: Express) {
         performLogin,
         sendUser);
 
-    app.post(USER_ROUTES.user_register.url, 
+    app.post(USER_ROUTES.user_register.url,
         hasParams(USER_ROUTES.user_register.params),
         isUsernameUnique,
         handleNewUser,
@@ -31,5 +32,5 @@ export function userRouter(app: Express) {
         isLoggedIn,
         handleDeleteUser,
         performLogout,
-        sendDeleted);
+        sendSuccessResponse);
 }

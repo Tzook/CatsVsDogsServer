@@ -9,16 +9,6 @@ export function sendUser(req: Req, res: Res, next: Nex) {
     next();
 }
 
-export function sendLogout(req: Req, res: Res, next: Nex) {
-    sendSuccess(res, {});
-    next();
-}
-
-export function sendDeleted(req: Req, res: Res, next: Nex) {
-    sendSuccess(res, {});
-    next();
-}
-
 export function performLogin(req: Req, res: Res, next: Nex) {
     req.login(req.body.user, error => {
         if (error) {
@@ -54,7 +44,7 @@ export async function isUsernameUnique(req: Req, res: Res, next: Nex) {
 }
 
 export function getUser(username: string): Promise<USER> {
-    return UserModel.findOne({username}) as any;
+    return UserModel.findOne({ username }) as any;
 }
 
 export async function handleNewUser(req: Req, res: Res, next: Nex) {

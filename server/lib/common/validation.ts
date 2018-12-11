@@ -17,6 +17,8 @@ export function hasParams(params: ROUTE_PARAMS) {
                 return next(new Error(`Parameter ${paramName} needs to be at least length: ${paramOptions.minLength}.`));
             } else if (paramOptions.maxLength !== undefined && param.length > paramOptions.maxLength) {
                 return next(new Error(`Parameter ${paramName} needs to be at most length: ${paramOptions.maxLength}.`));
+            } else if (paramOptions.matchRegex !== undefined && !paramOptions.matchRegex.test(param)) {
+                return next(new Error(`Parameter ${paramName} needs to match the regex: ${paramOptions.matchRegex}.`));
             }
         }
         next();

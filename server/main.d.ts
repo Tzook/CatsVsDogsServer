@@ -8,8 +8,11 @@ import * as mongoose from "mongoose";
 
 declare global {
     // Express
+
     type Express = core.Express
-    type Req = core.Request
+    interface Req extends core.Request {
+        user?: USER
+    }
     type Res = core.Response
     type Nex = core.NextFunction
 
@@ -32,11 +35,20 @@ declare global {
         type: string
         minLength?: number
         maxLength?: number
+        "// matchRegex"?: string
+        matchRegex?: RegExp
+        defaultValue?: any
     }
 
     // User
     interface USER extends mongoose.Document {
         username: string
         password: string
+        characters: CHAR[]
+    }
+
+    // Char
+    interface CHAR extends mongoose.Document {
+        name: string
     }
 }
