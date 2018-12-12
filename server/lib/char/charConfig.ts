@@ -1,6 +1,6 @@
 export const MAX_CHAR_NAME_LENGTH = 16;
 
-export const CHAR_ROUTES: ROUTES = {
+export const CHAR_ROUTES = {
     character_create: {
         url: "/character/create",
         params: {

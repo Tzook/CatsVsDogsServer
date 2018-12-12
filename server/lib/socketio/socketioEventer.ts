@@ -1,10 +1,18 @@
-import { SOCKETIO_EVENTS } from './socketioEvents';
+import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioEvents';
 import { deleteSocket } from './socketioMap';
-import { logger } from '../common/log';
+import { logger, errorer } from '../common/log';
 
 export function socketioEventer(io: SocketIO.Server, socket: SOCK) {
-    socket.on(SOCKETIO_EVENTS.disconnect.name, (s, data) => {
+    socket.on(SOCKETIO_EVENTS.disconnect.name, (data) => {
         logger("Disconnected", socket.char.name);
         deleteSocket(socket);
+    });
+}
+
+export function emitEventError(socket: SOCK, error: string | Error) {
+    const message = typeof error === "string" ? error : error.message;
+    errorer(message, socket.char.name);
+    socket.emit(SOCKETIO_EMITS.event_error.name, {
+        error: message,
     });
 }

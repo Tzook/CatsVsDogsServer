@@ -4,7 +4,7 @@ import _ = require('underscore');
 import { SOCKETIO_EVENTS } from '../socketio/socketioEvents';
 
 export function roomEventer(io: SocketIO.Server, socket: SOCK) {
-    socket.on(ROOM_EVENTS.entered_room.name, (s, data) => {
+    socket.on(ROOM_EVENTS.entered_room.name, (data) => {
         // TODO emit only to his room
         socket.broadcast.to(ROOM_NAME).emit(ROOM_EMITS.entered_room.name, {
             character: socket.char
@@ -22,7 +22,7 @@ export function roomEventer(io: SocketIO.Server, socket: SOCK) {
         socket.join(ROOM_NAME);
     });
 
-    socket.on(SOCKETIO_EVENTS.disconnect.name, (s, data) => {
+    socket.on(SOCKETIO_EVENTS.disconnect.name, (data) => {
         socket.broadcast.to(ROOM_NAME).emit(ROOM_EMITS.left_room.name, {
             id: socket.char._id
         });

@@ -6,13 +6,31 @@ export const ROOM_EVENTS = {
 
 export const ROOM_EMITS = {
     entered_room: {
-        name: "actor_join_room"
+        name: "actor_join_room",
+        params: {
+            character: {
+                type: "Char"
+            },
+        }
     },
     left_room: {
-        name: "actor_leave_room"
+        name: "actor_leave_room",
+        params: {
+            id: {
+                type: "string"
+            },
+        }
     },
     moved_room: {
-        name: "actor_move_room"
+        name: "actor_move_room",
+        params: {
+            character: {
+                type: "Char"
+            },
+            room: {
+                type: "string"
+            },
+        }
     },
 };
 

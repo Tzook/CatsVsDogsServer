@@ -1,4 +1,4 @@
-export const USER_ROUTES: ROUTES = {
+export const USER_ROUTES = {
     user_delete: {
         url: "/user/delete"
     },

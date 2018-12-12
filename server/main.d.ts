@@ -45,6 +45,26 @@ declare global {
     }
     type SOCKET_EVENT = {
         name: string,
+        params?: SOCKET_EVENT_PARAMS
+    }
+    type SOCKET_EVENT_PARAMS = {
+        [key: string]: SOCKET_EVENT_PARAM_OPTIONS
+    }
+    type SOCKET_EVENT_PARAM_OPTIONS = {
+        type: string
+    }
+    type SOCKET_EMITS = {
+        [emitName: string]: SOCKET_EMIT
+    }
+    type SOCKET_EMIT = {
+        name: string,
+        params?: SOCKET_EMIT_PARAMS
+    }
+    type SOCKET_EMIT_PARAMS = {
+        [key: string]: SOCKET_EMIT_PARAM_OPTIONS
+    }
+    type SOCKET_EMIT_PARAM_OPTIONS = {
+        type: string
     }
     type EVENTER = (io: SocketIO.Server, socket: SOCK) => void
 
@@ -64,5 +84,11 @@ declare global {
     // Char
     interface CHAR extends mongoose.Document {
         name: string
+        position: POSITION
+    }
+    interface POSITION {
+        x: number
+        y: number
+        z: number
     }
 }
