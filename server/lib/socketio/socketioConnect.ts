@@ -1,6 +1,7 @@
 import { addSocket, hasSocket } from './socketioMap';
 import { startEventers } from './eventer';
 import { logger } from '../common/log';
+import { applyMiddlewares } from './socketioMiddlewares';
 
 export function connectSocketio(io: SocketIO.Server) {
     io.on("connection", (socket: SOCK) => {
@@ -12,6 +13,7 @@ export function connectSocketio(io: SocketIO.Server) {
             return;
         }
         addSocket(socket);
+        applyMiddlewares(socket);
         startEventers(io, socket);
 
         logger('Connected', socket.char.name);

@@ -16,6 +16,10 @@ export function hasUser(user: USER) {
     return sockets.has(user._id.toString());
 }
 
+export function getSocketById(socketId: string) {
+    return sockets.get(socketId);
+}
+
 export function deleteSocket(socket: SOCK) {
     sockets.delete(socket.user._id.toString());
     sockets.delete(socket.char.name);
