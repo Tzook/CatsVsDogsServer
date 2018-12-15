@@ -69,3 +69,7 @@ export async function handleRandomName(req: Req, res: Res, next: Nex) {
         next(error);
     }
 }
+
+export function sendCharacters(req: Req, res: Res, next: Nex) {
+    sendSuccess(res, req.user.characters);
+}
