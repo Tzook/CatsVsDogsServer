@@ -30,7 +30,9 @@ export function bootstrap() {
     mongoose.connection.once('open', () => {
         logger("\t+*+*+ Connected to mongodb! on MongoLab +*+*+");
         const server = http.createServer(app).listen(app.get('port'));
-        const io = socketio(server);
+        const io = socketio(server, {
+            pingTimeout: 60000,
+        });
         startRouters(app);
         bootstrapSocketio(io);
         app.use(sendError);

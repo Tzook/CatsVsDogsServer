@@ -26,7 +26,7 @@ function handlePassport(io: SocketIO.Server) {
         key: SESSION_NAME,
         secret: 'UnicornsAreAmazingB0ss',
         store: getStore(),
-        success: function (req, next: Nex) {
+        success: function (req: { user: USER; _query: { id: string; }; char: CHAR; }, next: Nex) {
             const user: USER = req.user;
             for (let i = 0; i < user.characters.length; i++) {
                 if (user.characters[i]._id.equals(req._query.id)) {

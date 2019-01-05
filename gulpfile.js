@@ -18,13 +18,13 @@ gulp.task("compile", compile);
 gulp.task("restart", server.restart);
 
 gulp.task("watch", gulp.series("compile", () => {
-    server.listen({path: "output/main.js"});
+    server.listen({ path: "output/main.js" });
     gulp.watch(["server/**/*"], gulp.series("compile"));
     gulp.watch(["output/**/*"], gulp.series("restart"))
 }));
 
 gulp.task("default", () => {
-    let app = spawn("npm", ["start", "--color"], {detached: true});
+    let app = spawn("npm", ["start", "--color"], { detached: true });
     app.stdout.pipe(process.stdout);
     app.stderr.pipe(process.stderr);
 
