@@ -1,6 +1,8 @@
 import { logger, errorer } from '../common/log';
 import { ALL_EVENTS } from "./events";
 import { emitEventError } from './socketioEventer';
+import _ = require('underscore');
+import { inspect } from 'util';
 
 export function applyMiddlewares(socket: SOCK) {
     logEventMiddleware(socket);
@@ -9,7 +11,7 @@ export function applyMiddlewares(socket: SOCK) {
 
 function logEventMiddleware(socket: SOCK) {
     socket.use(([name, data], next) => {
-        logger(`Event '${name}' called for '${socket.char.name}'.`);
+        logger(`Event '${name}' called for '${socket.char.name}' with data '${inspect(data)}'.`);
         next();
     });
 }
@@ -37,6 +39,9 @@ function paramsMiddleware(socket: SOCK) {
                 if (!matchesType(data[param], options.type)) {
                     return emitEventError(socket, new Error(`Param '${param}' needs to be of type '${options.type}'. Got ${typeof data[param]} instead.`));
                 }
+                if (!options.allowEmpty && _.isEmpty(data[param])) {
+                    return emitEventError(socket, new Error(`Param '${param}' must not be empty.`));
+                }
                 if (options.type === "number") {
                     data[param] = +data[param];
                 }
@@ -46,11 +51,17 @@ function paramsMiddleware(socket: SOCK) {
     });
 }
 
+const ARRAY_REGEX = /Array<(\w+)>/;
+
 function matchesType(variable: any, type: string): boolean {
+    let matches: RegExpExecArray | null;
     if (type === "number") {
-        return !isNaN(parseInt(variable)) && isFinite(variable);
+        return _.isNumber(variable);
     } else if (type === "string") {
-        return typeof variable === type;
+        return _.isString(variable);
+    } else if (matches = ARRAY_REGEX.exec(type)) {
+        const [, arrayType] = matches;
+        return _.isArray(variable) && _.all(variable, (arrayValue) => matchesType(arrayValue, arrayType));
     } else {
         // no such case yet =p
         return false;

@@ -51,7 +51,8 @@ declare global {
         [key: string]: SOCKET_EVENT_PARAM_OPTIONS
     }
     type SOCKET_EVENT_PARAM_OPTIONS = {
-        type: string
+        type: string,
+        allowEmpty?: boolean,
     }
     type SOCKET_EMITS = {
         [emitName: string]: SOCKET_EMIT
