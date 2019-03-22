@@ -56,7 +56,7 @@ const ARRAY_REGEX = /Array<(\w+)>/;
 function matchesType(variable: any, type: string): boolean {
     let matches: RegExpExecArray | null;
     if (type === "number") {
-        return _.isNumber(variable);
+        return !isNaN(parseInt(variable)) && isFinite(variable);
     } else if (type === "string") {
         return _.isString(variable);
     } else if (matches = ARRAY_REGEX.exec(type)) {
