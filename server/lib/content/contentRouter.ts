@@ -6,7 +6,7 @@ export function contentRouter(app: Express) {
     app.get(CONTENT_ROUTES.content_get.url,
         sendContent);
 
-    app.get(CONTENT_ROUTES.content_update.url,
+    app.post(CONTENT_ROUTES.content_update.url,
         updateContent);
 }
 
