@@ -92,4 +92,23 @@ declare global {
         y: number
         z: number
     }
+
+    // Heroes.
+    type PERK = {
+        minValue: number,
+        maxValue: number,
+        perks?: PERKS,
+    }
+    type PERKS = { [perkName: string]: PERK }
+    type ABILITY = {
+        hitPerks?: PERKS,
+        activatePerks?: PERKS,
+    }
+    type ABILITIES = { [abilityKey: string]: ABILITY }
+    type HERO = {
+        name: string,
+        baseHp: number,
+        abilities: ABILITIES
+    }
+    type HEROES = { [heroName: string]: HERO }
 }

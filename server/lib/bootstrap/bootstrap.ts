@@ -10,7 +10,8 @@ import { getEnvVariable } from "./env";
 import { startRouters } from './router';
 import { sendError } from "../common/send";
 import { bootstrapSocketio } from "../socketio/socketioBootstrap";
-import { logger } from '../common/log';
+import { logger, errorer } from '../common/log';
+import { warmup } from "./warmups";
 
 export function bootstrap() {
     const app = express();
@@ -28,13 +29,18 @@ export function bootstrap() {
     mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
     mongoose.connection.once('open', () => {
-        logger("\t+*+*+ Connected to mongodb! on MongoLab +*+*+");
-        const server = http.createServer(app).listen(app.get('port'));
-        const io = socketio(server, {
-            pingTimeout: 60000,
+        logger("\t+*+*+ Connected to DB +*+*+");
+        warmup().then(() => {
+            logger("\t+*+*+ Data warmed up +*+*+");
+            const server = http.createServer(app).listen(app.get('port'));
+            const io = socketio(server, {
+                pingTimeout: 60000,
+            });
+            startRouters(app);
+            bootstrapSocketio(io);
+            app.use(sendError);
+        }).catch((error) => {
+            errorer("Failed warming up the server", error);
         });
-        startRouters(app);
-        bootstrapSocketio(io);
-        app.use(sendError);
     });
 }
