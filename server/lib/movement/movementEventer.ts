@@ -1,7 +1,7 @@
 import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from './movementEvents';
 import { ROOM_NAME } from '../room/roomEvents';
 
-export function movementEventer(io: SocketIO.Server, socket: SOCK) {
+export function movementEventer(socket: SOCK) {
     socket.on(MOVEMENT_EVENTS.moved.name, (data) => {
         socket.char.position.x = data.x;
         socket.char.position.y = data.y;

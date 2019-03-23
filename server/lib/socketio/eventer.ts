@@ -10,8 +10,8 @@ const eventers: EVENTER[] = [
     combatEventer,
 ];
 
-export function startEventers(io: SocketIO.Server, socket: SOCK) {
+export function startEventers(socket: SOCK) {
     for (const eventer of eventers) {
-        eventer(io, socket);
+        eventer(socket);
     }
 }

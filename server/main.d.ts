@@ -67,7 +67,7 @@ declare global {
     type SOCKET_EMIT_PARAM_OPTIONS = {
         type: string
     }
-    type EVENTER = (io: SocketIO.Server, socket: SOCK) => void
+    type EVENTER = (socket: SOCK) => void
 
     // Socket
     interface SOCK extends SocketIO.Socket {

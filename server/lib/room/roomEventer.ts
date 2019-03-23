@@ -3,7 +3,7 @@ import { getSocketById } from '../socketio/socketioMap';
 import _ = require('underscore');
 import { SOCKETIO_EVENTS } from '../socketio/socketioEvents';
 
-export function roomEventer(io: SocketIO.Server, socket: SOCK) {
+export function roomEventer(socket: SOCK) {
     socket.on(ROOM_EVENTS.entered_room.name, (data) => {
         // TODO emit only to his room
         socket.broadcast.to(ROOM_NAME).emit(ROOM_EMITS.entered_room.name, {

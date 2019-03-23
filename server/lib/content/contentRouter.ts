@@ -1,7 +1,7 @@
 import { CONTENT_ROUTES } from "./contentConfig";
 import { sendSuccess } from "../common/send";
 import { logger } from "../common/log";
-import { getHeroes, setHeroes } from "./heroesModel";
+import { getHeroes, setHeroes } from "../hero/heroModel";
 
 export function contentRouter(app: Express) {
     app.get(CONTENT_ROUTES.content_get.url,
@@ -49,7 +49,7 @@ function updateContent(req: Req, res: Res, next: Nex) {
         }
         heroes[hero.class_key] = {
             name: hero.class_key,
-            baseHp: hero.base_hp,
+            baseHp: +hero.base_hp,
             abilities,
         };
     }
@@ -80,8 +80,8 @@ function addAbility(heroAbilities: ABILITIES, reqAbility: reqAbility) {
 function addPerks(perks: PERKS, reqPerks: reqPerk[]) {
     for (const reqPerk of reqPerks) {
         let abilityPerk: PERK = {
-            minValue: reqPerk.min_value,
-            maxValue: reqPerk.max_value,
+            minValue: +reqPerk.min_value,
+            maxValue: +reqPerk.max_value,
         };
         if (reqPerk.perks) {
             abilityPerk.perks = {};

@@ -1,4 +1,4 @@
-import { fillHeroes } from "../content/heroesModel";
+import { fillHeroes } from "../hero/heroModel";
 
 const warmups: (() => Promise<any>)[] = [
     fillHeroes,

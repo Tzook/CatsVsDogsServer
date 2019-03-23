@@ -2,7 +2,7 @@ import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioEvents';
 import { deleteSocket } from './socketioMap';
 import { logger, errorer } from '../common/log';
 
-export function socketioEventer(io: SocketIO.Server, socket: SOCK) {
+export function socketioEventer(socket: SOCK) {
     socket.on(SOCKETIO_EVENTS.disconnect.name, (data) => {
         logger("Disconnected", socket.char.name);
         deleteSocket(socket);
