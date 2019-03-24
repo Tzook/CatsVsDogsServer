@@ -73,6 +73,8 @@ declare global {
     interface SOCK extends SocketIO.Socket {
         user: USER
         char: CHAR
+        hp: number
+        dead: boolean
     }
 
     // User

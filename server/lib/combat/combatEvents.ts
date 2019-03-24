@@ -51,4 +51,14 @@ export const COMBAT_EMITS = {
             },
         }
     },
+    respawn: {
+        name: "player_respawn",
+        params: {
+            player_id: {
+                type: "string"
+            },
+        }
+    },
 };
+
+export const RESPAWN_TIME = 5000;
