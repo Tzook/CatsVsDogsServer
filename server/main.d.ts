@@ -75,6 +75,8 @@ declare global {
         char: CHAR
         hp: number
         dead: boolean
+        hero: HERO
+        heroName: string
     }
 
     // User

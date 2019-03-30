@@ -11,7 +11,7 @@ export function combatEventer(socket: SOCK) {
     Object.defineProperty(socket, 'dead', { get: () => socket.hp <= 0 });
 
     socket.on(COMBAT_EVENTS.used_ability.name, ({ ability_key }: { ability_key: string }) => {
-        const hero = getHero(socket);
+        const hero = socket.hero;
         if (!hero.abilities[ability_key]) {
             return emitEventError(socket, new Error(`Ability '${ability_key}' does not exist on hero '${hero.name}'.`));
         }
@@ -28,7 +28,7 @@ export function combatEventer(socket: SOCK) {
     });
 
     socket.on(COMBAT_EVENTS.hit_ability.name, ({ ability_key, target_ids }: { ability_key: string, target_ids: string[] }) => {
-        const hero = getHero(socket);
+        const hero = socket.hero;
         if (!hero.abilities[ability_key]) {
             return emitEventError(socket, new Error(`Ability '${ability_key}' does not exist on hero '${hero.name}'.`));
         }
@@ -43,7 +43,7 @@ export function combatEventer(socket: SOCK) {
 }
 
 function resetHp(socket: SOCK) {
-    socket.hp = getHero(socket).baseHp;
+    socket.hp = socket.hero.baseHp;
 }
 
 function getTargets(socket: SOCK, targetIds: string[]) {
@@ -68,16 +68,21 @@ export function hurtPlayer(target: SOCK, damage: number) {
     });
     target.hp -= damage;
     if (target.dead) {
-        getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
-            player_id: target.char._id,
-        });
+        emitPlayerDead(target);
         setTimeout(() => respawnPlayer(target), RESPAWN_TIME);
     }
 }
 
-function respawnPlayer(target: SOCK) {
+export function emitPlayerDead(target: SOCK) {
+    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
+        player_id: target.char._id,
+    });
+}
+
+export function respawnPlayer(target: SOCK) {
     resetHp(target);
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.respawn.name, {
         player_id: target.char._id,
+        class_key: target.hero.name,
     });
 }
