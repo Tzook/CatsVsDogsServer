@@ -57,6 +57,9 @@ export const COMBAT_EMITS = {
             player_id: {
                 type: "string"
             },
+            class_key: {
+                type: "string"
+            },
         }
     },
 };
