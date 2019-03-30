@@ -55,7 +55,7 @@ function runPerkBuff(perks: PERKS, perkName: string, target: SOCK, callback?: (b
 }
 
 function isPerkActivated(perk: PERK | undefined) {
-    const perkValue = getPerkValueWithDefault(perk, 0);
+    const perkValue = getPerkValueWithDefault(perk, 1);
     return Math.random() < perkValue;
 }
 
