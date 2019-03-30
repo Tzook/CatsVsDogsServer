@@ -3,6 +3,7 @@ import { COMBAT_EMITS, COMBAT_EVENTS } from './../combat/combatEvents';
 import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioEvents';
 import { ROOM_EVENTS, ROOM_EMITS } from '../room/roomEvents';
 import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from '../movement/movementEvents';
+import { BUFFS_EMITS } from '../buffs/buffsEvents';
 
 export const ALL_EVENTS: { [key: string]: SOCKET_EVENTS } = {
     socketio: SOCKETIO_EVENTS,
@@ -17,4 +18,5 @@ export const ALL_EMITS: { [key: string]: SOCKET_EMITS } = {
     room: ROOM_EMITS,
     movement: MOVEMENT_EMITS,
     combat: COMBAT_EMITS,
+    buffs: BUFFS_EMITS,
 };

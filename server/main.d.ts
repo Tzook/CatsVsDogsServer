@@ -77,6 +77,7 @@ declare global {
         dead: boolean
         hero: HERO
         heroName: string
+        buffs: Map<string, BUFF>
     }
 
     // User
@@ -115,4 +116,11 @@ declare global {
         abilities: ABILITIES
     }
     type HEROES = { [heroName: string]: HERO }
+
+    // Buffs
+    type BUFF = {
+        timeEnd: number
+        timeoutInstance: NodeJS.Timer
+        buffActionTimeoutInstance?: NodeJS.Timer
+    }
 }

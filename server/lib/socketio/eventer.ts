@@ -3,6 +3,7 @@ import { roomEventer } from '../room/roomEventer';
 import { movementEventer } from "../movement/movementEventer";
 import { combatEventer } from "../combat/combatEventer";
 import { heroEventer } from "../hero/heroEventer";
+import { buffsEventer } from "../buffs/buffsEventer";
 
 const eventers: EVENTER[] = [
     socketioEventer,
@@ -10,6 +11,7 @@ const eventers: EVENTER[] = [
     heroEventer,
     movementEventer,
     combatEventer,
+    buffsEventer,
 ];
 
 export function startEventers(socket: SOCK) {

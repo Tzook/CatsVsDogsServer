@@ -1,6 +1,7 @@
-import { PERK_NAME_MELEE, PERK_NAME_AOE } from "./perksConfig";
+import { PERK_NAME_MELEE, PERK_NAME_AOE, PERK_NAME_BLEED, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL, PERK_NAMES_DUMB_BUFFS } from "./perksConfig";
 import _ = require("underscore");
 import { hurtPlayer } from "../combat/combatEventer";
+import { addBuff, removeBuff } from "../buffs/buffsEventer";
 
 export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
     const filteredTargets = filterTargets(perks, targets);
@@ -15,10 +16,47 @@ function filterTargets(perks: PERKS, targets: SOCK[]) {
 }
 
 function runPerks(socket: SOCK, perks: PERKS, target: SOCK) {
+    runPerkDmg(perks, target);
+    runPerkBleed(perks, target);
+    for (const perkName of PERK_NAMES_DUMB_BUFFS) {
+        runPerkBuff(perks, perkName, target);
+    }
+}
+
+function runPerkDmg(perks: PERKS, target: SOCK) {
     if (perks[PERK_NAME_MELEE]) {
         const dmg = getPerkValue(perks[PERK_NAME_MELEE]);
         hurtPlayer(target, dmg);
     }
+}
+
+function runPerkBleed(perks: PERKS, target: SOCK) {
+    runPerkBuff(perks, PERK_NAME_BLEED, target, (buffPerks: PERKS) => {
+        let intervalTicks = getPerkValueWithDefault(buffPerks[PERK_NAME_DURATION], 1);
+        const bleedInterval = setInterval(() => {
+            runPerkDmg(buffPerks, target);
+            if (--intervalTicks <= 0) {
+                removeBuff(target, PERK_NAME_BLEED);
+            }
+        }, PERK_DEFAULT_BLEED_INTERVAL);
+        return { buffTimer: bleedInterval };
+    });
+}
+
+function runPerkBuff(perks: PERKS, perkName: string, target: SOCK, callback?: (buffPerks: PERKS) => {}) {
+    if (perks[perkName]) {
+        const buffPerks = perks[perkName].perks;
+        if (isPerkActivated(buffPerks[PERK_NAME_CHANCE])) {
+            const options = callback ? callback(buffPerks) : {};
+            const duration = getPerkValueWithDefault(buffPerks[PERK_NAME_DURATION], 1);
+            addBuff(target, perkName, duration, options);
+        }
+    }
+}
+
+function isPerkActivated(perk: PERK | undefined) {
+    const perkValue = getPerkValueWithDefault(perk, 0);
+    return Math.random() < perkValue;
 }
 
 function getPerkValueWithDefault(perk: PERK | undefined, defaultValue: number): number {

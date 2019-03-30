@@ -4,6 +4,7 @@ import { emitEventError } from '../socketio/socketioEventer';
 import { getIo } from '../socketio/socketioConnect';
 import { applyPerks } from '../perks/perksServices';
 import { getSocketById } from '../socketio/socketioMap';
+import { removeBuffs } from '../buffs/buffsEventer';
 
 export function combatEventer(socket: SOCK) {
     resetHp(socket);
@@ -67,15 +68,16 @@ export function hurtPlayer(target: SOCK, damage: number) {
     });
     target.hp -= damage;
     if (target.dead) {
-        emitPlayerDead(target);
+        playerDead(target);
         setTimeout(() => respawnPlayer(target), RESPAWN_TIME);
     }
 }
 
-export function emitPlayerDead(target: SOCK) {
+export function playerDead(target: SOCK) {
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
         player_id: target.char._id,
     });
+    removeBuffs(target);
 }
 
 export function respawnPlayer(target: SOCK) {
