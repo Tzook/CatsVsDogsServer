@@ -1,6 +1,5 @@
 import { COMBAT_EVENTS, COMBAT_EMITS, RESPAWN_TIME } from './combatEvents';
 import { ROOM_NAME } from '../room/roomEvents';
-import { getHero } from '../hero/heroServices';
 import { emitEventError } from '../socketio/socketioEventer';
 import { getIo } from '../socketio/socketioConnect';
 import { applyPerks } from '../perks/perksServices';
