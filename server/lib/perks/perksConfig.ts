@@ -14,6 +14,8 @@ export const PERK_NAMES_DUMB_BUFFS = [
     PERK_NAME_STUN,
     PERK_NAME_CRIPPLE,
     PERK_NAME_SLOW,
+    "PushbackLeft",
+    "PushbackRight"
 ];
 
 export const PERK_DEFAULT_BLEED_INTERVAL = 990;
