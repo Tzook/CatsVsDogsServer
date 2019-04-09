@@ -11,6 +11,9 @@ export const ROOM_EMITS: SOCKET_EMITS = {
             character: {
                 type: "Char"
             },
+            class_key: {
+                type: "string"
+            },
         }
     },
     left_room: {

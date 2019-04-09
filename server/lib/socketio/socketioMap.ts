@@ -16,7 +16,7 @@ export function hasUser(user: USER) {
     return sockets.has(user._id.toString());
 }
 
-export function getSocketById(socketId: string) {
+export function getSocketById(socketId: string): SOCK {
     return sockets.get(socketId);
 }
 
