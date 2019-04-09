@@ -1,7 +1,7 @@
-import { ROOM_EVENTS, ROOM_EMITS, ROOM_NAME } from './roomEvents';
+import { ROOM_EVENTS, ROOM_EMITS, ROOM_NAME } from './roomConfig';
 import { getSocketById } from '../socketio/socketioMap';
 import _ = require('underscore');
-import { SOCKETIO_EVENTS } from '../socketio/socketioEvents';
+import { SOCKETIO_EVENTS } from '../socketio/socketioConfig';
 
 export function roomEventer(socket: SOCK) {
     socket.on(ROOM_EVENTS.entered_room.name, (data) => {

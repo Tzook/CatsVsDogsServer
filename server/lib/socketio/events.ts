@@ -1,9 +1,9 @@
-import { HERO_EVENTS } from './../hero/heroEvents';
-import { COMBAT_EMITS, COMBAT_EVENTS } from './../combat/combatEvents';
-import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioEvents';
-import { ROOM_EVENTS, ROOM_EMITS } from '../room/roomEvents';
-import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from '../movement/movementEvents';
-import { BUFFS_EMITS } from '../buffs/buffsEvents';
+import { HERO_EVENTS } from '../hero/heroConfig';
+import { COMBAT_EMITS, COMBAT_EVENTS } from '../combat/combatConfig';
+import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioConfig';
+import { ROOM_EVENTS, ROOM_EMITS } from '../room/roomConfig';
+import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from '../movement/movementConfig';
+import { BUFFS_EMITS } from '../buffs/buffsConfig';
 
 export const ALL_EVENTS: { [key: string]: SOCKET_EVENTS } = {
     socketio: SOCKETIO_EVENTS,

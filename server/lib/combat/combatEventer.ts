@@ -1,5 +1,5 @@
-import { COMBAT_EVENTS, COMBAT_EMITS, RESPAWN_TIME } from './combatEvents';
-import { ROOM_NAME } from '../room/roomEvents';
+import { COMBAT_EVENTS, COMBAT_EMITS, RESPAWN_TIME } from './combatConfig';
+import { ROOM_NAME } from '../room/roomConfig';
 import { emitEventError } from '../socketio/socketioEventer';
 import { getIo } from '../socketio/socketioConnect';
 import { applyPerks } from '../perks/perksServices';

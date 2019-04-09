@@ -1,4 +1,4 @@
-import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioEvents';
+import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioConfig';
 import { deleteSocket } from './socketioMap';
 import { logger, errorer } from '../common/log';
 

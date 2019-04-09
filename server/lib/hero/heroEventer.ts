@@ -1,4 +1,4 @@
-import { HERO_EVENTS, DEFAULT_HERO } from './heroEvents';
+import { HERO_EVENTS, DEFAULT_HERO } from './heroConfig';
 import { getHeroByName, getHero } from './heroServices';
 import { emitEventError } from '../socketio/socketioEventer';
 import { playerDead, respawnPlayer } from '../combat/combatEventer';

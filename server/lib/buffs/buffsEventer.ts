@@ -1,6 +1,6 @@
-import { BUFFS_EMITS } from './buffsEvents';
+import { BUFFS_EMITS } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
-import { ROOM_NAME } from "../room/roomEvents";
+import { ROOM_NAME } from "../room/roomConfig";
 
 export function buffsEventer(socket: SOCK) {
     socket.buffs = new Map();

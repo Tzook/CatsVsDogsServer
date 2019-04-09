@@ -1,5 +1,5 @@
-import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from './movementEvents';
-import { ROOM_NAME } from '../room/roomEvents';
+import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from './movementConfig';
+import { ROOM_NAME } from '../room/roomConfig';
 
 export function movementEventer(socket: SOCK) {
     socket.on(MOVEMENT_EVENTS.moved.name, (data) => {
