@@ -69,7 +69,7 @@ export function hurtPlayer(target: SOCK, damage: number) {
     target.hp -= damage;
     if (target.dead) {
         playerDead(target);
-        setTimeout(() => respawnPlayer(target), RESPAWN_TIME);
+        target.respawnTimer = setTimeout(() => respawnPlayer(target), RESPAWN_TIME);
     }
 }
 
@@ -78,6 +78,7 @@ export function playerDead(target: SOCK) {
         player_id: target.char._id,
     });
     removeBuffs(target);
+    clearTimeout(target.respawnTimer);
 }
 
 export function respawnPlayer(target: SOCK) {

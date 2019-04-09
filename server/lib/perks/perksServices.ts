@@ -44,7 +44,7 @@ function runPerkBleed(perks: PERKS, target: SOCK) {
 }
 
 function runPerkBuff(perks: PERKS, perkName: string, target: SOCK, callback?: (buffPerks: PERKS) => {}) {
-    if (perks[perkName]) {
+    if (perks[perkName] && !target.dead) {
         const buffPerks = perks[perkName].perks;
         if (isPerkActivated(buffPerks[PERK_NAME_CHANCE])) {
             const options = callback ? callback(buffPerks) : {};

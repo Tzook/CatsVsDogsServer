@@ -75,6 +75,7 @@ declare global {
         char: CHAR
         hp: number
         dead: boolean
+        respawnTimer: NodeJS.Timer
         hero: HERO
         heroName: string
         buffs: Map<string, BUFF>
