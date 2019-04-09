@@ -1,4 +1,4 @@
-export const MOVEMENT_EVENTS = {
+export const MOVEMENT_EVENTS: SOCKET_EVENTS = {
     moved: {
         name: "movement",
         log: false,
@@ -22,7 +22,7 @@ export const MOVEMENT_EVENTS = {
     },
 };
 
-export const MOVEMENT_EMITS = {
+export const MOVEMENT_EMITS: SOCKET_EMITS = {
     moved: {
         name: "movement",
         params: {

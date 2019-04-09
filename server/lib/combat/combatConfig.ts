@@ -1,4 +1,4 @@
-export const COMBAT_EVENTS = {
+export const COMBAT_EVENTS: SOCKET_EVENTS = {
     used_ability: {
         name: "used_ability",
         params: {
@@ -20,7 +20,7 @@ export const COMBAT_EVENTS = {
     },
 };
 
-export const COMBAT_EMITS = {
+export const COMBAT_EMITS: SOCKET_EMITS = {
     used_ability: {
         name: "player_use_ability",
         params: {

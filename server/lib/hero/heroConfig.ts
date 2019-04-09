@@ -1,4 +1,4 @@
-export const HERO_EVENTS = {
+export const HERO_EVENTS: SOCKET_EVENTS = {
     hero_change: {
         name: "switch_character",
         params: {
