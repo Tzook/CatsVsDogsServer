@@ -1,6 +1,7 @@
 export const MOVEMENT_EVENTS = {
     moved: {
         name: "movement",
+        log: false,
         params: {
             x: {
                 type: "number"

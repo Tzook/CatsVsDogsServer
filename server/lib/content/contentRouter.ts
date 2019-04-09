@@ -2,6 +2,7 @@ import { CONTENT_ROUTES } from "./contentConfig";
 import { sendSuccess } from "../common/send";
 import { logger } from "../common/log";
 import { getHeroes, setHeroes } from "../hero/heroModel";
+import { setBuffs, getBuffs } from "../buffs/buffsModel";
 
 export function contentRouter(app: Express) {
     app.get(CONTENT_ROUTES.content_get.url,
@@ -12,7 +13,7 @@ export function contentRouter(app: Express) {
 }
 
 function sendContent(req: Req, res: Res, next: Nex) {
-    sendSuccess(res, { heroes: getHeroes() });
+    sendSuccess(res, { heroes: getHeroes(), buffs: getBuffs() });
     next();
 }
 
@@ -31,9 +32,14 @@ type reqAbility = {
 type expectedReqBody = {
     classes: {
         class_key: string,
-        base_hp: number,
+        base_hp: string,
         abilities: reqAbility[]
     }[],
+    buffs: {
+        buff_key: string
+        duration: string
+        perks?: reqPerk[],
+    }[]
 };
 
 function updateContent(req: Req, res: Res, next: Nex) {
@@ -53,12 +59,20 @@ function updateContent(req: Req, res: Res, next: Nex) {
             abilities,
         };
     }
-
     setHeroes(heroes);
-    logger("Updated content", heroes);
 
-    sendSuccess(res, { heroes });
-    next();
+    let buffs: BUFFS = {};
+    for (const buff of body.buffs) {
+        buffs[buff.buff_key] = {
+            name: buff.buff_key,
+            duration: +buff.duration,
+        };
+    }
+    setBuffs(buffs);
+
+    logger("Updated content", heroes, buffs);
+
+    sendContent(req, res, next);
 }
 
 function addAbility(heroAbilities: ABILITIES, reqAbility: reqAbility) {

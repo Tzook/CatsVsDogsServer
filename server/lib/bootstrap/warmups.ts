@@ -1,7 +1,9 @@
 import { fillHeroes } from "../hero/heroModel";
+import { fillBuffs } from "../buffs/buffsModel";
 
 const warmups: (() => Promise<any>)[] = [
     fillHeroes,
+    fillBuffs,
 ];
 
 export function warmup(): Promise<any> {

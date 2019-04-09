@@ -6,7 +6,7 @@ export function buffsEventer(socket: SOCK) {
     socket.buffs = new Map();
 }
 
-export function addBuff(target: SOCK, buffKey: string, duration: number, { buffTimer }: { buffTimer?: NodeJS.Timer }) {
+export function addBuff(target: SOCK, buffKey: string, duration: number, { buffTimer }: ADD_BUFF_OPTIONS) {
     const durationInMs = duration * 1000;
     const existingBuff = target.buffs.get(buffKey);
     if (existingBuff) {
@@ -26,7 +26,7 @@ export function addBuff(target: SOCK, buffKey: string, duration: number, { buffT
 }
 
 function createBuff(target: SOCK, buffKey: string, durationInMs: number, buffTimer?: NodeJS.Timer) {
-    const buff: BUFF = {
+    const buff: BUFF_INSTANCE = {
         timeEnd: Date.now() + durationInMs,
         timeoutInstance: setTimeout(() => removeBuff(target, buffKey), durationInMs),
         buffActionTimeoutInstance: buffTimer,

@@ -5,18 +5,12 @@ import _ = require('underscore');
 import { inspect } from 'util';
 
 export function applyMiddlewares(socket: SOCK) {
-    logEventMiddleware(socket);
-    paramsMiddleware(socket);
+    const eventMap = getEventMap();
+    logEventMiddleware(socket, eventMap);
+    paramsMiddleware(socket, eventMap);
 }
 
-function logEventMiddleware(socket: SOCK) {
-    socket.use(([name, data], next) => {
-        logger(`Event '${name}' called for '${socket.char.name}' with data '${inspect(data)}'.`);
-        next();
-    });
-}
-
-function paramsMiddleware(socket: SOCK) {
+function getEventMap(): SOCKET_EVENTS {
     let params: SOCKET_EVENTS = {};
     for (let eventMapKey in ALL_EVENTS) {
         const eventMap = ALL_EVENTS[eventMapKey];
@@ -28,9 +22,21 @@ function paramsMiddleware(socket: SOCK) {
             params[event.name] = event;
         }
     }
+    return params;
+}
 
+function logEventMiddleware(socket: SOCK, eventMap: SOCKET_EVENTS) {
     socket.use(([name, data], next) => {
-        const event = params[name];
+        if (!eventMap[name] || eventMap[name].log !== false) {
+            logger(`Event '${name}' called for '${socket.char.name}' with data '${inspect(data)}'.`);
+        }
+        next();
+    });
+}
+
+function paramsMiddleware(socket: SOCK, eventMap: SOCKET_EVENTS) {
+    socket.use(([name, data], next) => {
+        const event = eventMap[name];
         if (!event) {
             return emitEventError(socket, new Error(`Event '${name}' does not exist.`));
         } else if (event.params) {

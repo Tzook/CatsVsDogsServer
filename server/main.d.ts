@@ -44,7 +44,8 @@ declare global {
         [eventName: string]: SOCKET_EVENT
     }
     type SOCKET_EVENT = {
-        name: string,
+        name: string
+        log?: boolean
         params?: SOCKET_EVENT_PARAMS
     }
     type SOCKET_EVENT_PARAMS = {
@@ -78,7 +79,7 @@ declare global {
         respawnTimer: NodeJS.Timer
         hero: HERO
         heroName: string
-        buffs: Map<string, BUFF>
+        buffs: Map<string, BUFF_INSTANCE>
     }
 
     // User
@@ -119,9 +120,17 @@ declare global {
     type HEROES = { [heroName: string]: HERO }
 
     // Buffs
-    type BUFF = {
+    type BUFF_OBJECT = {
+        name: string
+        duration: number
+    }
+    type BUFFS = { [buffName: string]: BUFF_OBJECT }
+    type BUFF_INSTANCE = {
         timeEnd: number
         timeoutInstance: NodeJS.Timer
         buffActionTimeoutInstance?: NodeJS.Timer
+    }
+    type ADD_BUFF_OPTIONS = {
+        buffTimer?: NodeJS.Timer
     }
 }
