@@ -83,13 +83,13 @@ function updateContent(req: Req, res: Res, next: Nex) {
 function addAbility(hero: HERO, reqAbility: reqAbility) {
     let ability: ABILITY;
     hero.abilities[reqAbility.ability_key] = ability = {};
-    if (reqAbility.cooldown) {
-        ability.cd = +reqAbility.cooldown;
-    }
     if (reqAbility.cooldown_requirements) {
+        ability.cdCount = +reqAbility.cooldown;
         for (const requirement of reqAbility.cooldown_requirements) {
             addRequirement(hero, requirement, reqAbility.ability_key);
         }
+    } else {
+        ability.cdTime = +reqAbility.cooldown;
     }
     if (reqAbility.perks) {
         ability.activatePerks = {};

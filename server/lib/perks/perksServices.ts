@@ -1,6 +1,6 @@
 import { PERK_NAME_MELEE, PERK_NAME_AOE, PERK_NAME_BLEED, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL } from "./perksConfig";
 import _ = require("underscore");
-import { hurtPlayer } from "../combat/combatEventer";
+import { hurtPlayer, incrementHitCd } from "../combat/combatEventer";
 import { addBuff, removeBuff } from "../buffs/buffsEventer";
 import { getBuffs, getBuff } from "../buffs/buffsModel";
 
@@ -14,6 +14,10 @@ export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
     const filteredTargets = filterTargets(perks, targets);
     for (const target of filteredTargets) {
         runPerks(socket, perks, target);
+    }
+    // If hit any enemy.
+    if (perks[PERK_NAME_MELEE] && filteredTargets.length > 0) {
+        incrementHitCd(socket, filteredTargets.length);
     }
 }
 

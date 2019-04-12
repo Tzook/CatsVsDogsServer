@@ -80,6 +80,7 @@ declare global {
         hero: HERO
         heroName: string
         buffs: Map<string, BUFF_INSTANCE>
+        cd: Map<string, CD_INSTANCE>
     }
 
     // User
@@ -110,7 +111,8 @@ declare global {
     type ABILITY = {
         hitPerks?: PERKS,
         activatePerks?: PERKS,
-        cd?: number,
+        cdCount?: number,
+        cdTime?: number,
     }
     type ABILITIES = { [abilityKey: string]: ABILITY }
     type HERO = {
@@ -126,6 +128,11 @@ declare global {
     type CD_REDUCER = {
         abilityKey: string,
         value: number,
+    }
+
+    type CD_INSTANCE = {
+        value?: number
+        timer?: NodeJS.Timer
     }
 
     // Buffs

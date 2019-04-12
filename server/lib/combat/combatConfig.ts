@@ -62,6 +62,23 @@ export const COMBAT_EMITS: SOCKET_EMITS = {
             },
         }
     },
+    cooldown_progress: {
+        name: "cooldown_progress",
+        params: {
+            player_id: {
+                type: "string"
+            },
+            ability_key: {
+                type: "string"
+            },
+            added_progress: {
+                type: "number"
+            },
+            total_progress: {
+                type: "number"
+            }
+        }
+    }
 };
 
 export const RESPAWN_TIME = 5000;
