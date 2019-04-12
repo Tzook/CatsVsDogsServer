@@ -1,10 +1,10 @@
-export const ROOM_EVENTS: SOCKET_EVENTS = {
+export const ROOM_EVENTS = {
     entered_room: {
         name: "entered_room"
     },
 };
 
-export const ROOM_EMITS: SOCKET_EMITS = {
+export const ROOM_EMITS = {
     entered_room: {
         name: "actor_join_room",
         params: {

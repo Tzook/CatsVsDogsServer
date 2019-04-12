@@ -1,4 +1,4 @@
-export const BUFFS_EMITS: SOCKET_EMITS = {
+export const BUFFS_EMITS = {
     buff_started: {
         name: "buff_activated",
         params: {
