@@ -110,14 +110,23 @@ declare global {
     type ABILITY = {
         hitPerks?: PERKS,
         activatePerks?: PERKS,
+        cd?: number,
     }
     type ABILITIES = { [abilityKey: string]: ABILITY }
     type HERO = {
         name: string,
         baseHp: number,
-        abilities: ABILITIES
+        abilities: ABILITIES,
+        cdReducers?: CD_REDUCERS,
     }
     type HEROES = { [heroName: string]: HERO }
+    type CD_REDUCERS = {
+        hit?: CD_REDUCER[],
+    }
+    type CD_REDUCER = {
+        abilityKey: string,
+        value: number,
+    }
 
     // Buffs
     type BUFF_OBJECT = {

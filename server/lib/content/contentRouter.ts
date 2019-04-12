@@ -17,18 +17,6 @@ function sendContent(req: Req, res: Res, next: Nex) {
     next();
 }
 
-type reqPerk = {
-    perk_attribute: string,
-    min_value: number,
-    max_value: number,
-    perks?: reqPerk[]
-}
-type reqAbility = {
-    ability_key: string,
-    ability_on_hit?: reqAbility,
-    perks?: reqPerk[],
-    perks_on_hit?: reqPerk[],
-}
 type expectedReqBody = {
     classes: {
         class_key: string,
@@ -41,6 +29,24 @@ type expectedReqBody = {
         perks?: reqPerk[],
     }[]
 };
+type reqAbility = {
+    ability_key: string,
+    ability_on_hit?: reqAbility,
+    perks?: reqPerk[],
+    perks_on_hit?: reqPerk[],
+    cooldown: string,
+    cooldown_requirements: reqCd[],
+};
+type reqPerk = {
+    perk_attribute: string,
+    min_value: number,
+    max_value: number,
+    perks?: reqPerk[]
+};
+type reqCd = {
+    requirement_attribute: string,
+    max_value: string,
+};
 
 function updateContent(req: Req, res: Res, next: Nex) {
     logger("Updating content", req.body);
@@ -49,15 +55,14 @@ function updateContent(req: Req, res: Res, next: Nex) {
 
     let heroes: HEROES = {};
     for (const hero of body.classes) {
-        let abilities = {};
-        for (const ability of hero.abilities) {
-            addAbility(abilities, ability);
-        }
         heroes[hero.class_key] = {
             name: hero.class_key,
             baseHp: +hero.base_hp,
-            abilities,
+            abilities: {},
         };
+        for (const ability of hero.abilities) {
+            addAbility(heroes[hero.class_key], ability);
+        }
     }
     setHeroes(heroes);
 
@@ -75,9 +80,17 @@ function updateContent(req: Req, res: Res, next: Nex) {
     sendContent(req, res, next);
 }
 
-function addAbility(heroAbilities: ABILITIES, reqAbility: reqAbility) {
+function addAbility(hero: HERO, reqAbility: reqAbility) {
     let ability: ABILITY;
-    heroAbilities[reqAbility.ability_key] = ability = {};
+    hero.abilities[reqAbility.ability_key] = ability = {};
+    if (reqAbility.cooldown) {
+        ability.cd = +reqAbility.cooldown;
+    }
+    if (reqAbility.cooldown_requirements) {
+        for (const requirement of reqAbility.cooldown_requirements) {
+            addRequirement(hero, requirement, reqAbility.ability_key);
+        }
+    }
     if (reqAbility.perks) {
         ability.activatePerks = {};
         addPerks(ability.activatePerks, reqAbility.perks)
@@ -87,7 +100,19 @@ function addAbility(heroAbilities: ABILITIES, reqAbility: reqAbility) {
         addPerks(ability.hitPerks, reqAbility.perks_on_hit)
     }
     if (reqAbility.ability_on_hit) {
-        addAbility(heroAbilities, reqAbility.ability_on_hit);
+        addAbility(hero, reqAbility.ability_on_hit);
+    }
+}
+
+function addRequirement(hero: HERO, requirement: reqCd, abilityKey: string) {
+    hero.cdReducers = hero.cdReducers || {};
+    let reqArray: CD_REDUCER[] | undefined;
+    if (requirement.requirement_attribute === "OnHitRequirement") {
+        reqArray = hero.cdReducers.hit = hero.cdReducers.hit || [];
+    }
+    if (reqArray) {
+        const cdReducer: CD_REDUCER = { abilityKey, value: +requirement.max_value };
+        reqArray.push(cdReducer);
     }
 }
 
