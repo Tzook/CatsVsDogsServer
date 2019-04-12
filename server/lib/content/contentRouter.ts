@@ -89,7 +89,7 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
             addRequirement(hero, requirement, reqAbility.ability_key);
         }
     } else {
-        ability.cdTime = +reqAbility.cooldown;
+        ability.cdTime = (+reqAbility.cooldown) * 1000;
     }
     if (reqAbility.perks) {
         ability.activatePerks = {};

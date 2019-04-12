@@ -1,4 +1,4 @@
-import { COMBAT_EVENTS, COMBAT_EMITS, RESPAWN_TIME } from './combatConfig';
+import { COMBAT_EVENTS, COMBAT_EMITS, RESPAWN_TIME, COOLDOWN_TIME_FORGIVENESS } from './combatConfig';
 import { ROOM_NAME } from '../room/roomConfig';
 import { emitEventError } from '../socketio/socketioEventer';
 import { getIo } from '../socketio/socketioConnect';
@@ -79,7 +79,7 @@ function setTimerCd(socket: SOCK, abilityKey: string) {
     socket.cd.set(abilityKey, {
         timer: setTimeout(() => {
             socket.cd.delete(abilityKey);
-        }, socket.hero.abilities[abilityKey].cdTime - 300),
+        }, socket.hero.abilities[abilityKey].cdTime - COOLDOWN_TIME_FORGIVENESS),
     });
 }
 

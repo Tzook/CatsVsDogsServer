@@ -82,3 +82,4 @@ export const COMBAT_EMITS = {
 };
 
 export const RESPAWN_TIME = 5000;
+export const COOLDOWN_TIME_FORGIVENESS = 300;
