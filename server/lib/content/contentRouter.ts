@@ -32,6 +32,8 @@ type expectedReqBody = {
 type reqAbility = {
     ability_key: string,
     ability_on_hit?: reqAbility,
+    ability_on_left?: reqAbility,
+    ability_on_fall?: reqAbility,
     perks?: reqPerk[],
     perks_on_hit?: reqPerk[],
     cooldown: string,
@@ -101,6 +103,12 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
     }
     if (reqAbility.ability_on_hit) {
         addAbility(hero, reqAbility.ability_on_hit);
+    }
+    if (reqAbility.ability_on_left) {
+        addAbility(hero, reqAbility.ability_on_left);
+    }
+    if (reqAbility.ability_on_fall) {
+        addAbility(hero, reqAbility.ability_on_fall);
     }
 }
 
