@@ -46,9 +46,6 @@ export function combatEventer(socket: SOCK) {
         if (socket.dead) {
             return emitEventError(socket, new Error(`Cant use ability when dead.`));
         }
-        if (isOnCd(socket, ability_key)) {
-            return emitEventError(socket, new Error(`Ability '${ability_key}' is still on cooldown.`));
-        }
         if (hero.abilities[ability_key].hitPerks) {
             const targets = getTargets(socket, target_ids);
             applyPerks(socket, hero.abilities[ability_key].hitPerks, targets);
