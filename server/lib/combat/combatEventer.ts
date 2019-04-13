@@ -65,7 +65,9 @@ function resetHp(socket: SOCK) {
 function isOnCd(socket: SOCK, abilityKey: string): boolean {
     // Timer cd - return if it exists.
     if (socket.hero.abilities[abilityKey].cdTime) {
-        return socket.cd.has(abilityKey);
+        return false;
+        // TODO handle abilities with counts
+        // return socket.cd.has(abilityKey);
     }
     // Value cd - return if the value is below the goal.
     const cd = socket.cd.get(abilityKey) || { value: 0 };
