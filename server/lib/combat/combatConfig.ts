@@ -74,9 +74,6 @@ export const COMBAT_EMITS = {
             ability_key: {
                 type: "string"
             },
-            added_progress: {
-                type: "number"
-            },
             total_progress: {
                 type: "number"
             }

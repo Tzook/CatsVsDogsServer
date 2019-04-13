@@ -101,7 +101,6 @@ function incrementAbilityCd(socket: SOCK, abilityKey: string, valueToIncrement: 
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.cooldown_progress.name, {
         player_id: socket.char._id,
         ability_key: abilityKey,
-        added_progress: valueToIncrement,
         total_progress: cd.value,
     });
 }
