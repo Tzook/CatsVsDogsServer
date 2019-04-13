@@ -129,9 +129,10 @@ function getTargets(socket: SOCK, targetIds: string[]) {
     return targets;
 }
 
-export function hurtPlayer(target: SOCK, damage: number) {
+export function hurtPlayer(attacker: SOCK, target: SOCK, damage: number) {
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.hurt.name, {
         player_id: target.char._id,
+        attacker_id: attacker.char._id,
         damage,
     });
     target.hp -= damage;

@@ -38,6 +38,9 @@ export const COMBAT_EMITS = {
             player_id: {
                 type: "string"
             },
+            attacker_id: {
+                type: "string"
+            },
             damage: {
                 type: "number"
             },

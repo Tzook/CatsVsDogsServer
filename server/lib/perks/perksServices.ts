@@ -4,7 +4,7 @@ import { hurtPlayer, incrementHitCd } from "../combat/combatEventer";
 import { addBuff, removeBuff } from "../buffs/buffsEventer";
 import { getBuffs, getBuff } from "../buffs/buffsModel";
 
-type PERK_BUFF_HANDLER = (buffPerks: PERKS, target: SOCK) => ADD_BUFF_OPTIONS;
+type PERK_BUFF_HANDLER = (buffPerks: PERKS, attacker: SOCK, target: SOCK) => ADD_BUFF_OPTIONS;
 
 const PERK_NAME_TO_HANDLER: { [perkName: string]: PERK_BUFF_HANDLER } = {
     [PERK_NAME_BLEED]: buffBleedHandler,
@@ -27,23 +27,23 @@ function filterTargets(perks: PERKS, targets: SOCK[]) {
 }
 
 function runPerks(socket: SOCK, perks: PERKS, target: SOCK) {
-    runPerkDmg(perks, target);
+    runPerkDmg(perks, socket, target);
     for (let buffName in getBuffs()) {
-        runPerkBuff(perks, buffName, target, PERK_NAME_TO_HANDLER[buffName]);
+        runPerkBuff(perks, buffName, socket, target, PERK_NAME_TO_HANDLER[buffName]);
     }
 }
 
-function runPerkDmg(perks: PERKS, target: SOCK) {
+function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK) {
     if (perks[PERK_NAME_MELEE]) {
         const dmg = getPerkValue(perks[PERK_NAME_MELEE]);
-        hurtPlayer(target, dmg);
+        hurtPlayer(attacker, target, dmg);
     }
 }
 
-function buffBleedHandler(buffPerks: PERKS, target: SOCK): ADD_BUFF_OPTIONS {
+function buffBleedHandler(buffPerks: PERKS, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {
     let intervalTicks = getPerkValueWithDefault(buffPerks[PERK_NAME_DURATION], getBuff(PERK_NAME_BLEED).duration);
     const bleedInterval = setInterval(() => {
-        runPerkDmg(buffPerks, target);
+        runPerkDmg(buffPerks, attacker, target);
         if (--intervalTicks <= 0) {
             removeBuff(target, PERK_NAME_BLEED);
         }
@@ -51,13 +51,13 @@ function buffBleedHandler(buffPerks: PERKS, target: SOCK): ADD_BUFF_OPTIONS {
     return { buffTimer: bleedInterval };
 }
 
-function runPerkBuff(perks: PERKS, perkName: string, target: SOCK, callback?: PERK_BUFF_HANDLER) {
+function runPerkBuff(perks: PERKS, perkName: string, attacker: SOCK, target: SOCK, callback?: PERK_BUFF_HANDLER) {
     if (perks[perkName] && !target.dead) {
         const buffPerks = perks[perkName].perks;
         if (isPerkActivated(buffPerks[PERK_NAME_CHANCE])) {
-            const options = callback ? callback(buffPerks, target) : {};
+            const options = callback ? callback(buffPerks, attacker, target) : {};
             const duration = getPerkValueWithDefault(buffPerks[PERK_NAME_DURATION], getBuff(perkName).duration);
-            addBuff(target, perkName, duration, options);
+            addBuff(attacker, target, perkName, duration, options);
         }
     }
 }

@@ -8,6 +8,9 @@ export const BUFFS_EMITS = {
             player_id: {
                 type: "string"
             },
+            attacker_id: {
+                type: "string"
+            },
         }
     },
     buff_ended: {

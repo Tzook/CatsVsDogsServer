@@ -6,7 +6,7 @@ export function buffsEventer(socket: SOCK) {
     socket.buffs = new Map();
 }
 
-export function addBuff(target: SOCK, buffKey: string, duration: number, { buffTimer }: ADD_BUFF_OPTIONS) {
+export function addBuff(attacker: SOCK, target: SOCK, buffKey: string, duration: number, { buffTimer }: ADD_BUFF_OPTIONS) {
     const durationInMs = duration * 1000;
     const existingBuff = target.buffs.get(buffKey);
     if (existingBuff) {
@@ -21,7 +21,7 @@ export function addBuff(target: SOCK, buffKey: string, duration: number, { buffT
     } else {
         // No buff yet - create one.
         createBuff(target, buffKey, durationInMs, buffTimer);
-        emitBuffStarted(target, buffKey);
+        emitBuffStarted(attacker, target, buffKey);
     }
 }
 
@@ -56,11 +56,10 @@ export function removeBuffs(target: SOCK) {
     }
 }
 
-
-
-function emitBuffStarted(target: SOCK, buffKey: string) {
+function emitBuffStarted(attacker: SOCK, target: SOCK, buffKey: string) {
     getIo().to(ROOM_NAME).emit(BUFFS_EMITS.buff_started.name, {
         player_id: target.char._id,
+        attacker_id: attacker.char._id,
         buff_key: buffKey,
     });
 }
