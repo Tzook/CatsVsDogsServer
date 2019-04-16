@@ -70,8 +70,8 @@ function isOnCd(socket: SOCK, abilityKey: string): boolean {
         // return socket.cd.has(abilityKey);
     }
     // Value cd - return if the value is below the goal.
-    const cd = socket.cd.get(abilityKey) || { value: 0 };
-    return cd.value < socket.hero.abilities[abilityKey].cdCount;
+    const cd = socket.cd.get(abilityKey) || getEmptyAbilityCd(socket, abilityKey);
+    return cd.value > 0;
 }
 
 function setTimerCd(socket: SOCK, abilityKey: string) {
@@ -94,15 +94,25 @@ export function incrementHitCd(socket: SOCK, counter = 1) {
 function incrementAbilityCd(socket: SOCK, abilityKey: string, valueToIncrement: number) {
     let cd = socket.cd.get(abilityKey);
     if (!cd) {
-        cd = { value: 0 };
+        cd = getEmptyAbilityCd(socket, abilityKey);
         socket.cd.set(abilityKey, cd);
     }
-    cd.value += valueToIncrement;
+    if (cd.value === 0) {
+        return;
+    }
+    cd.value -= valueToIncrement;
+    if (cd.value < 0) {
+        cd.value = 0;
+    }
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.cooldown_progress.name, {
         player_id: socket.char._id,
         ability_key: abilityKey,
         total_progress: cd.value,
     });
+}
+
+function getEmptyAbilityCd(socket: SOCK, abilityKey: string): CD_INSTANCE {
+    return { value: socket.hero.abilities[abilityKey].cdCount };
 }
 
 function clearCds(target: SOCK) {
