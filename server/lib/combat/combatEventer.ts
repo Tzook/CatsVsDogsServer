@@ -112,8 +112,9 @@ function incrementAbilityCd(socket: SOCK, abilityKey: string, valueToIncrement: 
 }
 
 function getEmptyAbilityCd(socket: SOCK, abilityKey: string): CD_INSTANCE {
-    const value = socket.hero.abilities[abilityKey].startWithCd ? socket.hero.abilities[abilityKey].cdCount : 0;
-    return { value };
+    // TODO
+    // const value = socket.hero.abilities[abilityKey].startWithCd ? socket.hero.abilities[abilityKey].cdCount : 0;
+    return { value: socket.hero.abilities[abilityKey].cdCount };
 }
 
 function clearCds(target: SOCK, resetAll: boolean) {
