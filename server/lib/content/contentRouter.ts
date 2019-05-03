@@ -140,6 +140,13 @@ function addPerks(perks: PERKS, reqPerks: reqPerk[]) {
             abilityPerk.perks = {};
             addPerks(abilityPerk.perks, reqPerk.perks);
         }
-        perks[reqPerk.perk_attribute] = abilityPerk;
+        if (perks[reqPerk.perk_attribute]) {
+            // Perk exists already - combine it with the other perk
+            if (perks[reqPerk.perk_attribute].perks || abilityPerk.perks) {
+                perks[reqPerk.perk_attribute].perks = Object.assign({}, perks[reqPerk.perk_attribute].perks, abilityPerk.perks);
+            }
+        } else {
+            perks[reqPerk.perk_attribute] = abilityPerk;
+        }
     }
 }
