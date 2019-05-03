@@ -81,6 +81,7 @@ declare global {
         heroName: string
         buffs: Map<string, BUFF_INSTANCE>
         cd: Map<string, CD_INSTANCE>
+        buffActions: BUFF_ACTIONS
     }
 
     // User
@@ -150,5 +151,8 @@ declare global {
     }
     type ADD_BUFF_OPTIONS = {
         buffTimer?: NodeJS.Timer
+    }
+    type BUFF_ACTIONS = {
+        [key: string]: Set<string>
     }
 }

@@ -1,9 +1,11 @@
-import { BUFFS_EMITS } from './buffsConfig';
+import { BUFFS_EMITS, BUFF_ACTIONS } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
 import { ROOM_NAME } from "../room/roomConfig";
+import { getBuff } from './buffsModel';
 
 export function buffsEventer(socket: SOCK) {
     socket.buffs = new Map();
+    socket.buffActions = {};
 }
 
 export function addBuff(attacker: SOCK, target: SOCK, buffKey: string, duration: number, { buffTimer }: ADD_BUFF_OPTIONS) {
@@ -21,6 +23,7 @@ export function addBuff(attacker: SOCK, target: SOCK, buffKey: string, duration:
     } else {
         // No buff yet - create one.
         createBuff(target, buffKey, durationInMs, buffTimer);
+        addBuffActions(target, buffKey);
         emitBuffStarted(attacker, target, buffKey);
     }
 }
@@ -40,6 +43,7 @@ export function removeBuff(target: SOCK, buffKey: string) {
     if (target.buffs.has(buffKey)) {
         clearBuffTimers(target, buffKey);
         target.buffs.delete(buffKey);
+        removeBuffActions(target, buffKey);
         emitBuffEnded(target, buffKey);
     }
 }
@@ -56,6 +60,43 @@ export function removeBuffs(target: SOCK) {
     }
 }
 
+// ==================
+// Buff actions
+// ==================
+
+function addBuffActions(target: SOCK, buffKey: string) {
+    const buff = getBuff(buffKey);
+    for (let perkName in buff.perks) {
+        if (BUFF_ACTIONS.has(perkName)) {
+            addBuffAction(target, buffKey, perkName);
+        }
+    }
+}
+
+function addBuffAction(target: SOCK, buffKey: string, buffAction: string) {
+    target.buffActions[buffAction] = target.buffActions[buffAction] || new Set();
+    target.buffActions[buffAction].add(buffKey);
+}
+
+function removeBuffActions(target: SOCK, buffKey: string) {
+    const buff = getBuff(buffKey);
+    for (let perkName in buff.perks) {
+        if (BUFF_ACTIONS.has(perkName)) {
+            removeBuffAction(target, buffKey, perkName);
+        }
+    }
+}
+
+function removeBuffAction(target: SOCK, buffKey: string, buffAction: string) {
+    target.buffActions[buffAction].delete(buffKey);
+    if (target.buffActions[buffAction].size === 0) {
+        delete target.buffActions[buffAction];
+    }
+}
+
+// ==================
+// Emits
+// ==================
 function emitBuffStarted(attacker: SOCK, target: SOCK, buffKey: string) {
     getIo().to(ROOM_NAME).emit(BUFFS_EMITS.buff_started.name, {
         player_id: target.char._id,
