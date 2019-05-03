@@ -1,14 +1,8 @@
-import { PERK_NAME_MELEE, PERK_NAME_AOE, PERK_NAME_BLEED, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL } from "./perksConfig";
+import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT } from './perksConfig';
 import _ = require("underscore");
 import { hurtPlayer, incrementHitCd } from "../combat/combatEventer";
 import { addBuff, removeBuff } from "../buffs/buffsEventer";
-import { getBuffs, getBuff } from "../buffs/buffsModel";
-
-type PERK_BUFF_HANDLER = (buffPerks: PERKS, attacker: SOCK, target: SOCK) => ADD_BUFF_OPTIONS;
-
-const PERK_NAME_TO_HANDLER: { [perkName: string]: PERK_BUFF_HANDLER } = {
-    [PERK_NAME_BLEED]: buffBleedHandler,
-}
+import { getBuff } from "../buffs/buffsModel";
 
 export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
     const filteredTargets = filterTargets(perks, targets);
@@ -16,7 +10,7 @@ export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
         runPerks(socket, perks, target);
     }
     // If hit any enemy.
-    if (perks[PERK_NAME_MELEE] && filteredTargets.length > 0) {
+    if (perks[PERK_NAME_DMG] && filteredTargets.length > 0) {
         incrementHitCd(socket, filteredTargets.length);
     }
 }
@@ -28,38 +22,44 @@ function filterTargets(perks: PERKS, targets: SOCK[]) {
 
 function runPerks(socket: SOCK, perks: PERKS, target: SOCK) {
     runPerkDmg(perks, socket, target);
-    for (let buffName in getBuffs()) {
-        runPerkBuff(perks, buffName, socket, target, PERK_NAME_TO_HANDLER[buffName]);
+    if (perks[PERK_ADD_BUFF] && !target.dead) {
+        const { name } = perks[PERK_ADD_BUFF];
+        runPerkBuff(name, socket, target);
     }
 }
 
 function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK) {
-    if (perks[PERK_NAME_MELEE]) {
-        const dmg = getPerkValue(perks[PERK_NAME_MELEE]);
+    if (perks[PERK_NAME_DMG]) {
+        const dmg = getPerkValue(perks[PERK_NAME_DMG]);
         hurtPlayer(attacker, target, dmg);
     }
 }
 
-function buffBleedHandler(buffPerks: PERKS, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {
-    let intervalTicks = getPerkValueWithDefault(buffPerks[PERK_NAME_DURATION], getBuff(PERK_NAME_BLEED).duration);
+function runPerkBuff(buffName: string, attacker: SOCK, target: SOCK) {
+    const buff = getBuff(buffName);
+    if (isPerkActivated(buff.perks[PERK_NAME_CHANCE])) {
+        const options = runBuffPerks(buff, attacker, target);
+        const duration = getPerkValueWithDefault(buff.perks[PERK_NAME_DURATION], buff.duration);
+        addBuff(attacker, target, buffName, duration, options);
+    }
+}
+
+function runBuffPerks(buff: BUFF_OBJECT, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {
+    if (buff.perks[PERK_NAME_DOT]) {
+        return buffHandlerDot(buff, buff.perks[PERK_NAME_DOT].perks, attacker, target);
+    }
+    return {};
+}
+
+function buffHandlerDot(buff: BUFF_OBJECT, dotPerks: PERKS, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {
+    let intervalTicks = buff.duration;
     const bleedInterval = setInterval(() => {
-        runPerkDmg(buffPerks, attacker, target);
+        runPerkDmg(dotPerks, attacker, target);
         if (--intervalTicks <= 0) {
-            removeBuff(target, PERK_NAME_BLEED);
+            removeBuff(target, buff.name);
         }
     }, PERK_DEFAULT_BLEED_INTERVAL);
     return { buffTimer: bleedInterval };
-}
-
-function runPerkBuff(perks: PERKS, perkName: string, attacker: SOCK, target: SOCK, callback?: PERK_BUFF_HANDLER) {
-    if (perks[perkName] && !target.dead) {
-        const buffPerks = perks[perkName].perks;
-        if (isPerkActivated(buffPerks[PERK_NAME_CHANCE])) {
-            const options = callback ? callback(buffPerks, attacker, target) : {};
-            const duration = getPerkValueWithDefault(buffPerks[PERK_NAME_DURATION], getBuff(perkName).duration);
-            addBuff(attacker, target, perkName, duration, options);
-        }
-    }
 }
 
 function isPerkActivated(perk: PERK | undefined) {

@@ -40,6 +40,7 @@ type reqAbility = {
     cooldown_requirements: reqCd[],
 };
 type reqPerk = {
+    name: string,
     perk_attribute: string,
     min_value: number,
     max_value: number,
@@ -69,11 +70,15 @@ function updateContent(req: Req, res: Res, next: Nex) {
     setHeroes(heroes);
 
     let buffs: BUFFS = {};
-    for (const buff of body.buffs) {
-        buffs[buff.buff_key] = {
-            name: buff.buff_key,
-            duration: +buff.duration,
+    for (const reqBuff of body.buffs) {
+        buffs[reqBuff.buff_key] = {
+            name: reqBuff.buff_key,
+            duration: +reqBuff.duration,
         };
+        if (reqBuff.perks) {
+            buffs[reqBuff.buff_key].perks = {};
+            addPerks(buffs[reqBuff.buff_key].perks, reqBuff.perks);
+        }
     }
     setBuffs(buffs);
 
@@ -95,11 +100,11 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
     }
     if (reqAbility.perks) {
         ability.activatePerks = {};
-        addPerks(ability.activatePerks, reqAbility.perks)
+        addPerks(ability.activatePerks, reqAbility.perks);
     }
     if (reqAbility.perks_on_hit) {
         ability.hitPerks = {};
-        addPerks(ability.hitPerks, reqAbility.perks_on_hit)
+        addPerks(ability.hitPerks, reqAbility.perks_on_hit);
     }
     if (reqAbility.ability_on_hit) {
         addAbility(hero, reqAbility.ability_on_hit);
@@ -129,6 +134,7 @@ function addPerks(perks: PERKS, reqPerks: reqPerk[]) {
         let abilityPerk: PERK = {
             minValue: +reqPerk.min_value,
             maxValue: +reqPerk.max_value,
+            name: reqPerk.name,
         };
         if (reqPerk.perks) {
             abilityPerk.perks = {};

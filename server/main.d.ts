@@ -103,6 +103,7 @@ declare global {
 
     // Heroes.
     type PERK = {
+        name: string,
         minValue: number,
         maxValue: number,
         perks?: PERKS,
@@ -139,6 +140,7 @@ declare global {
     type BUFF_OBJECT = {
         name: string
         duration: number
+        perks?: PERKS
     }
     type BUFFS = { [buffName: string]: BUFF_OBJECT }
     type BUFF_INSTANCE = {
