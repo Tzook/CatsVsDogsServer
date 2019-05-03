@@ -38,6 +38,8 @@ type reqAbility = {
     perks_on_hit?: reqPerk[],
     cooldown: string,
     cooldown_requirements: reqCd[],
+    start_with_cooldown: "True" | "False",
+    cooldown_resets_on_respawn: "True" | "False",
 };
 type reqPerk = {
     name: string,
@@ -98,6 +100,12 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
     } else {
         ability.cdTime = (+reqAbility.cooldown) * 1000;
     }
+    if (reqAbility.start_with_cooldown) {
+        ability.startWithCd = reqAbility.start_with_cooldown === "True";
+    }
+    if (reqAbility.cooldown_resets_on_respawn) {
+        ability.respawnResetCd = reqAbility.cooldown_resets_on_respawn === "True";
+    }
     if (reqAbility.perks) {
         ability.activatePerks = {};
         addPerks(ability.activatePerks, reqAbility.perks);
@@ -120,7 +128,7 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
 function addRequirement(hero: HERO, requirement: reqCd, abilityKey: string) {
     hero.cdReducers = hero.cdReducers || {};
     let reqArray: CD_REDUCER[] | undefined;
-    if (requirement.requirement_attribute === "OnHitRequirement") {
+    if (requirement.requirement_attribute === "HitRequirement") {
         reqArray = hero.cdReducers.hit = hero.cdReducers.hit || [];
     }
     if (reqArray) {

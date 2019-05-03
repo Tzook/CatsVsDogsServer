@@ -1,4 +1,4 @@
-import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL } from './perksConfig';
+import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL } from './perksConfig';
 import _ = require("underscore");
 import { hurtPlayer, incrementHitCd, healPlayer } from "../combat/combatEventer";
 import { addBuff, removeBuff } from "../buffs/buffsEventer";
@@ -45,14 +45,16 @@ function runPerkHeal(perks: PERKS, attacker: SOCK, target: SOCK) {
 
 function runPerkBuff(buffName: string, attacker: SOCK, target: SOCK) {
     const buff = getBuff(buffName);
-    if (isPerkActivated(buff.perks[PERK_NAME_CHANCE])) {
+    if (isPerkActivated((buff.perks || {})[PERK_NAME_CHANCE])) {
         const options = runBuffPerks(buff, attacker, target);
-        const duration = getPerkValueWithDefault(buff.perks[PERK_NAME_DURATION], buff.duration);
-        addBuff(attacker, target, buffName, duration, options);
+        addBuff(attacker, target, buffName, buff.duration, options);
     }
 }
 
 function runBuffPerks(buff: BUFF_OBJECT, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {
+    if (!buff.perks) {
+        return {};
+    }
     if (buff.perks[PERK_NAME_DOT]) {
         return buffHandlerDot(buff, buff.perks[PERK_NAME_DOT].perks, attacker, target);
     }

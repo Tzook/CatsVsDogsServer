@@ -54,7 +54,7 @@ export function combatEventer(socket: SOCK) {
 
     socket.on(SOCKETIO_EVENTS.disconnect.name, (data) => {
         clearPlayer(socket);
-        clearCds(socket);
+        clearCds(socket, true);
     });
 }
 
@@ -112,12 +112,14 @@ function incrementAbilityCd(socket: SOCK, abilityKey: string, valueToIncrement: 
 }
 
 function getEmptyAbilityCd(socket: SOCK, abilityKey: string): CD_INSTANCE {
-    return { value: socket.hero.abilities[abilityKey].cdCount };
+    const value = socket.hero.abilities[abilityKey].startWithCd ? socket.hero.abilities[abilityKey].cdCount : 0;
+    return { value };
 }
 
-function clearCds(target: SOCK) {
-    for (const [, cd] of target.cd) {
-        if (cd.timer) {
+function clearCds(target: SOCK, resetAll: boolean) {
+    for (const [abilityKey, cd] of target.cd) {
+        const shouldResetCd = resetAll || target.hero.abilities[abilityKey].respawnResetCd;
+        if (shouldResetCd && cd.timer) {
             clearTimeout(cd.timer);
         }
     }
@@ -166,6 +168,7 @@ export function playerDead(target: SOCK) {
         player_id: target.char._id,
     });
     clearPlayer(target);
+    clearCds(target, false);
 }
 
 function clearPlayer(target: SOCK) {

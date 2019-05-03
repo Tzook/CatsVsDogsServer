@@ -113,6 +113,8 @@ declare global {
     type ABILITY = {
         hitPerks?: PERKS,
         activatePerks?: PERKS,
+        startWithCd?: boolean,
+        respawnResetCd?: boolean,
         cdCount?: number,
         cdTime?: number,
     }

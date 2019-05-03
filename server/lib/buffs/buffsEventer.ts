@@ -1,4 +1,4 @@
-import { BUFFS_EMITS, BUFF_ACTIONS } from './buffsConfig';
+import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
 import { ROOM_NAME } from "../room/roomConfig";
 import { getBuff } from './buffsModel';
@@ -92,6 +92,10 @@ function removeBuffAction(target: SOCK, buffKey: string, buffAction: string) {
     if (target.buffActions[buffAction].size === 0) {
         delete target.buffActions[buffAction];
     }
+}
+
+export function hasBlockBuffAction(target: SOCK): boolean {
+    return !!target.buffActions[BUFF_ACTION_BLOCK];
 }
 
 // ==================
