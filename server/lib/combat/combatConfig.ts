@@ -60,6 +60,17 @@ export const COMBAT_EMITS = {
             },
         }
     },
+    block: {
+        name: "player_block",
+        params: {
+            player_id: {
+                type: "string"
+            },
+            attacker_id: {
+                type: "string"
+            },
+        }
+    },
     dead: {
         name: "player_ded",
         params: {

@@ -164,6 +164,13 @@ export function healPlayer(attacker: SOCK, target: SOCK, healValue: number) {
     target.hp += heal;
 }
 
+export function playerBlocked(attacker: SOCK, target: SOCK) {
+    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.block.name, {
+        player_id: target.char._id,
+        attacker_id: attacker.char._id,
+    });
+}
+
 export function playerDead(target: SOCK) {
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
         player_id: target.char._id,

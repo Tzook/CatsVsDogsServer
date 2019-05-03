@@ -1,7 +1,7 @@
 import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL } from './perksConfig';
 import _ = require("underscore");
-import { hurtPlayer, incrementHitCd, healPlayer } from "../combat/combatEventer";
-import { addBuff, removeBuff } from "../buffs/buffsEventer";
+import { hurtPlayer, playerBlocked, incrementHitCd, healPlayer } from "../combat/combatEventer";
+import { addBuff, removeBuff, hasBlockBuffAction } from "../buffs/buffsEventer";
 import { getBuff } from "../buffs/buffsModel";
 
 export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
@@ -31,8 +31,12 @@ function runPerks(socket: SOCK, perks: PERKS, target: SOCK) {
 
 function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK) {
     if (perks[PERK_NAME_DMG]) {
-        const dmg = getPerkValue(perks[PERK_NAME_DMG]);
-        hurtPlayer(attacker, target, dmg);
+        if (hasBlockBuffAction(target)) {
+            playerBlocked(attacker, target);
+        } else {
+            const dmg = getPerkValue(perks[PERK_NAME_DMG]);
+            hurtPlayer(attacker, target, dmg);
+        }
     }
 }
 
