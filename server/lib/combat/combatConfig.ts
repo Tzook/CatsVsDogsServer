@@ -46,6 +46,20 @@ export const COMBAT_EMITS = {
             },
         }
     },
+    heal: {
+        name: "player_heal",
+        params: {
+            player_id: {
+                type: "string"
+            },
+            attacker_id: {
+                type: "string"
+            },
+            heal: {
+                type: "number"
+            },
+        }
+    },
     dead: {
         name: "player_ded",
         params: {

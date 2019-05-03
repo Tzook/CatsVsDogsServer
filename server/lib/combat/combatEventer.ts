@@ -151,6 +151,16 @@ export function hurtPlayer(attacker: SOCK, target: SOCK, damage: number) {
     }
 }
 
+export function healPlayer(attacker: SOCK, target: SOCK, healValue: number) {
+    const heal = Math.min(healValue, target.hero.baseHp - target.hp);
+    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.heal.name, {
+        player_id: target.char._id,
+        attacker_id: attacker.char._id,
+        heal,
+    });
+    target.hp += heal;
+}
+
 export function playerDead(target: SOCK) {
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
         player_id: target.char._id,

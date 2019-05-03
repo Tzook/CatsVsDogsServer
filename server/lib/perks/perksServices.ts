@@ -1,6 +1,6 @@
-import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT } from './perksConfig';
+import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_DURATION, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL } from './perksConfig';
 import _ = require("underscore");
-import { hurtPlayer, incrementHitCd } from "../combat/combatEventer";
+import { hurtPlayer, incrementHitCd, healPlayer } from "../combat/combatEventer";
 import { addBuff, removeBuff } from "../buffs/buffsEventer";
 import { getBuff } from "../buffs/buffsModel";
 
@@ -10,7 +10,7 @@ export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
         runPerks(socket, perks, target);
     }
     // If hit any enemy.
-    if (perks[PERK_NAME_DMG] && filteredTargets.length > 0) {
+    if ((perks[PERK_NAME_DMG] || perks[PERK_NAME_HEAL]) && filteredTargets.length > 0) {
         incrementHitCd(socket, filteredTargets.length);
     }
 }
@@ -22,6 +22,7 @@ function filterTargets(perks: PERKS, targets: SOCK[]) {
 
 function runPerks(socket: SOCK, perks: PERKS, target: SOCK) {
     runPerkDmg(perks, socket, target);
+    runPerkHeal(perks, socket, target);
     if (perks[PERK_ADD_BUFF] && !target.dead) {
         const { name } = perks[PERK_ADD_BUFF];
         runPerkBuff(name, socket, target);
@@ -32,6 +33,13 @@ function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK) {
     if (perks[PERK_NAME_DMG]) {
         const dmg = getPerkValue(perks[PERK_NAME_DMG]);
         hurtPlayer(attacker, target, dmg);
+    }
+}
+
+function runPerkHeal(perks: PERKS, attacker: SOCK, target: SOCK) {
+    if (perks[PERK_NAME_HEAL]) {
+        const heal = getPerkValue(perks[PERK_NAME_HEAL]);
+        healPlayer(attacker, target, heal);
     }
 }
 
