@@ -14,7 +14,7 @@ export function heroEventer(socket: SOCK) {
             return emitEventError(socket, new Error(`Hero ${heroName} doesn't exist.`));
         }
 
-        playerDead(socket);
+        playerDead(socket, true);
 
         socket.heroName = heroName;
 

@@ -149,7 +149,7 @@ export function hurtPlayer(attacker: SOCK, target: SOCK, damage: number) {
     });
     target.hp -= damage;
     if (target.dead) {
-        playerDead(target);
+        playerDead(target, false);
         target.respawnTimer = setTimeout(() => respawnPlayer(target), RESPAWN_TIME);
     }
 }
@@ -171,12 +171,12 @@ export function playerBlocked(attacker: SOCK, target: SOCK) {
     });
 }
 
-export function playerDead(target: SOCK) {
+export function playerDead(target: SOCK, resetAllCd: boolean) {
     getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
         player_id: target.char._id,
     });
     clearPlayer(target);
-    clearCds(target, false);
+    clearCds(target, resetAllCd);
 }
 
 function clearPlayer(target: SOCK) {
