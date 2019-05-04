@@ -59,7 +59,7 @@ export function runPerkHeal(perks: PERKS, attacker: SOCK, target: SOCK) {
 export function runPerkLifeSteal(perks: PERKS, attacker: SOCK, target: SOCK, dmg: number) {
     if (perks[PERK_NAME_LIFE_STEAL] && dmg) {
         const heal = getPerkPercentOrValue(perks[PERK_NAME_LIFE_STEAL], dmg);
-        healPlayer(attacker, target, heal);
+        healPlayer(target, attacker, heal);
     }
 }
 

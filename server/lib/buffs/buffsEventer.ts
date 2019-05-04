@@ -107,7 +107,7 @@ export function getRetaliateBuffAction(target: SOCK): PERK | void {
 }
 
 export function runPlayerHitBuffActions(attacker: SOCK, target: SOCK, dmg: number): BUFF_OBJECT | void {
-    const hitActions = target.buffActions[BUFF_ACTION_HIT];
+    const hitActions = attacker.buffActions[BUFF_ACTION_HIT];
     if (hitActions) {
         for (const buffKey of hitActions) {
             const buff = getBuff(buffKey);
