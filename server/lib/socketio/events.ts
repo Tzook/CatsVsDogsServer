@@ -4,6 +4,7 @@ import { SOCKETIO_EVENTS, SOCKETIO_EMITS } from './socketioConfig';
 import { ROOM_EVENTS, ROOM_EMITS } from '../room/roomConfig';
 import { MOVEMENT_EVENTS, MOVEMENT_EMITS } from '../movement/movementConfig';
 import { BUFFS_EMITS } from '../buffs/buffsConfig';
+import { PERKS_EMITS } from '../perks/perksConfig';
 
 export const ALL_EVENTS: { [key: string]: SOCKET_EVENTS } = {
     socketio: SOCKETIO_EVENTS,
@@ -19,4 +20,5 @@ export const ALL_EMITS: { [key: string]: SOCKET_EMITS } = {
     movement: MOVEMENT_EMITS,
     combat: COMBAT_EMITS,
     buffs: BUFFS_EMITS,
+    perks: PERKS_EMITS,
 };
