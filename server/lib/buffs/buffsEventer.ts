@@ -1,7 +1,8 @@
-import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE } from './buffsConfig';
+import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE, BUFF_ACTION_HIT, BUFF_ACTION_HURT, BUFF_ACTION_PERK_INTERRUPT } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
 import { ROOM_NAME } from "../room/roomConfig";
 import { getBuff } from './buffsModel';
+import { runPerkBuff, runPerkHeal, runPerkLifeSteal } from '../perks/perksServices';
 
 export function buffsEventer(socket: SOCK) {
     socket.buffs = new Map();
@@ -98,11 +99,42 @@ export function hasBlockBuffAction(target: SOCK): boolean {
     return !!target.buffActions[BUFF_ACTION_BLOCK];
 }
 
-export function getRetaliateBuffAction(target: SOCK): BUFF_OBJECT | void {
+export function getRetaliateBuffAction(target: SOCK): PERK | void {
     const retaliateActions = target.buffActions[BUFF_ACTION_RETALIATE];
     if (retaliateActions && retaliateActions.size > 0) {
-        // TODO what happens if you have many multiple different retaliates?
-        return getBuff(Array.from(retaliateActions)[0]);
+        return getBuff(Array.from(retaliateActions)[0]).perks[BUFF_ACTION_RETALIATE];
+    }
+}
+
+export function runPlayerHitBuffActions(attacker: SOCK, target: SOCK, dmg: number): BUFF_OBJECT | void {
+    const hitActions = target.buffActions[BUFF_ACTION_HIT];
+    if (hitActions) {
+        for (const buffKey of hitActions) {
+            const buff = getBuff(buffKey);
+            const { perks } = buff.perks[BUFF_ACTION_HIT];
+            runBuffActionInterrupt(attacker, buffKey, perks);
+            runPerkBuff(perks, attacker, target);
+            runPerkLifeSteal(perks, attacker, target, dmg);
+        }
+    }
+}
+
+export function runPlayerHurtBuffActions(attacker: SOCK, target: SOCK): BUFF_OBJECT | void {
+    const hurtActions = target.buffActions[BUFF_ACTION_HURT];
+    if (hurtActions) {
+        for (const buffKey of hurtActions) {
+            const buff = getBuff(buffKey);
+            const { perks } = buff.perks[BUFF_ACTION_HURT];
+            runBuffActionInterrupt(target, buffKey, perks);
+            runPerkBuff(perks, target, attacker);
+            runPerkHeal(perks, target, attacker);
+        }
+    }
+}
+
+function runBuffActionInterrupt(target: SOCK, buffKey: string, actionPerks: PERKS) {
+    if (actionPerks[BUFF_ACTION_PERK_INTERRUPT]) {
+        removeBuff(target, buffKey);
     }
 }
 
