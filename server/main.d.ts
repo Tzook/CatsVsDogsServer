@@ -103,13 +103,6 @@ declare global {
     }
 
     // Heroes.
-    type PERK = {
-        name: string,
-        minValue: number,
-        maxValue: number,
-        perks?: PERKS,
-    }
-    type PERKS = { [perkName: string]: PERK }
     type ABILITY = {
         hitPerks?: PERKS,
         activatePerks?: PERKS,
@@ -128,6 +121,8 @@ declare global {
     type HEROES = { [heroName: string]: HERO }
     type CD_REDUCERS = {
         hit?: CD_REDUCER[],
+        heal?: CD_REDUCER[],
+        use?: CD_REDUCER[],
     }
     type CD_REDUCER = {
         abilityKey: string,
@@ -137,6 +132,24 @@ declare global {
     type CD_INSTANCE = {
         value?: number
         timer?: NodeJS.Timer
+    }
+
+    // Perks
+    type PERK = {
+        name: string,
+        minValue: number,
+        maxValue: number,
+        perks?: PERKS,
+    }
+    type PERKS = { [perkName: string]: PERK }
+    type DMG_PERK_OPTIONS = {
+        blockable?: boolean,
+        retaliateable?: boolean,
+        buffable?: boolean
+    }
+    type PERKS_OPTIONS = {
+        dmg?: number,
+        buffKey?: string
     }
 
     // Buffs

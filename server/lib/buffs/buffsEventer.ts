@@ -1,8 +1,8 @@
-import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE, BUFF_ACTION_HIT, BUFF_ACTION_HURT, BUFF_ACTION_PERK_INTERRUPT } from './buffsConfig';
+import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE, BUFF_ACTION_HIT, BUFF_ACTION_HURT, BUFF_ACTION_PERK_INTERRUPT, BUFF_ACTION_HEAL } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
 import { ROOM_NAME } from "../room/roomConfig";
 import { getBuff } from './buffsModel';
-import { runPerkBuff, runPerkHeal, runPerkLifeSteal } from '../perks/perksServices';
+import { runPerks } from '../perks/perksServices';
 
 export function buffsEventer(socket: SOCK) {
     socket.buffs = new Map();
@@ -106,33 +106,30 @@ export function getRetaliateBuffAction(target: SOCK): PERK | void {
     }
 }
 
-export function runPlayerHitBuffActions(attacker: SOCK, target: SOCK, dmg: number): BUFF_OBJECT | void {
-    const hitActions = attacker.buffActions[BUFF_ACTION_HIT];
-    if (hitActions) {
-        for (const buffKey of hitActions) {
+export function runHitBuffActions(attacker: SOCK, target: SOCK, dmg: number): void {
+    runBuffActions(attacker, target, BUFF_ACTION_HIT, dmg);
+}
+
+export function runHealBuffActions(attacker: SOCK, target: SOCK, heal: number): void {
+    runBuffActions(attacker, target, BUFF_ACTION_HEAL, heal);
+}
+
+export function runHurtBuffActions(attacker: SOCK, target: SOCK): void {
+    runBuffActions(target, attacker, BUFF_ACTION_HURT);
+}
+
+function runBuffActions(attacker: SOCK, target: SOCK, buffActionKey: string, dmg?: number) {
+    const buffActions = attacker.buffActions[buffActionKey];
+    if (buffActions) {
+        for (const buffKey of buffActions) {
             const buff = getBuff(buffKey);
-            const { perks } = buff.perks[BUFF_ACTION_HIT];
-            runBuffActionInterrupt(attacker, buffKey, perks);
-            runPerkBuff(perks, attacker, target);
-            runPerkLifeSteal(perks, attacker, target, dmg);
+            const { perks } = buff.perks[buffActionKey];
+            runPerks(attacker, target, perks, { retaliateable: false }, { dmg, buffKey });
         }
     }
 }
 
-export function runPlayerHurtBuffActions(attacker: SOCK, target: SOCK): BUFF_OBJECT | void {
-    const hurtActions = target.buffActions[BUFF_ACTION_HURT];
-    if (hurtActions) {
-        for (const buffKey of hurtActions) {
-            const buff = getBuff(buffKey);
-            const { perks } = buff.perks[BUFF_ACTION_HURT];
-            runBuffActionInterrupt(target, buffKey, perks);
-            runPerkBuff(perks, target, attacker);
-            runPerkHeal(perks, target, attacker);
-        }
-    }
-}
-
-function runBuffActionInterrupt(target: SOCK, buffKey: string, actionPerks: PERKS) {
+export function runBuffActionInterrupt(target: SOCK, buffKey: string, actionPerks: PERKS) {
     if (actionPerks[BUFF_ACTION_PERK_INTERRUPT]) {
         removeBuff(target, buffKey);
     }

@@ -27,6 +27,7 @@ export function combatEventer(socket: SOCK) {
             player_id: socket.char._id,
             ability_key,
         });
+        incrementUseCd(socket);
         if (hero.abilities[ability_key].activatePerks) {
             applyPerks(socket, hero.abilities[ability_key].activatePerks, [socket]);
         }
@@ -84,13 +85,29 @@ function setTimerCd(socket: SOCK, abilityKey: string) {
 export function incrementHitCd(socket: SOCK, counter = 1) {
     if (socket.hero.cdReducers && socket.hero.cdReducers.hit) {
         for (const cdReducer of socket.hero.cdReducers.hit) {
-            const valueToIncrement = counter * cdReducer.value;
-            incrementAbilityCd(socket, cdReducer.abilityKey, valueToIncrement);
+            incrementAbilityCd(socket, cdReducer, counter);
         }
     }
 }
 
-function incrementAbilityCd(socket: SOCK, abilityKey: string, valueToIncrement: number) {
+export function incrementHealCd(socket: SOCK, counter = 1) {
+    if (socket.hero.cdReducers && socket.hero.cdReducers.heal) {
+        for (const cdReducer of socket.hero.cdReducers.heal) {
+            incrementAbilityCd(socket, cdReducer, counter);
+        }
+    }
+}
+
+export function incrementUseCd(socket: SOCK) {
+    if (socket.hero.cdReducers && socket.hero.cdReducers.use) {
+        for (const cdReducer of socket.hero.cdReducers.use) {
+            incrementAbilityCd(socket, cdReducer);
+        }
+    }
+}
+
+function incrementAbilityCd(socket: SOCK, { value, abilityKey }: CD_REDUCER, counter: number = 1) {
+    const valueToIncrement = counter * value;
     let cd = socket.cd.get(abilityKey);
     if (!cd) {
         cd = getEmptyAbilityCd(socket, abilityKey);

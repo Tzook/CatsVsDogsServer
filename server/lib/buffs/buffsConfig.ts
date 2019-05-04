@@ -28,6 +28,7 @@ export const BUFFS_EMITS = {
 
 export const BUFF_ACTION_HIT = "Condition_OnHit";
 export const BUFF_ACTION_HURT = "Condition_OnHurt";
+export const BUFF_ACTION_HEAL = "Condition_OnHeal";
 export const BUFF_ACTION_RETALIATE = "Retaliate";
 export const BUFF_ACTION_BLOCK = "Block";
 
@@ -36,6 +37,7 @@ export const BUFF_ACTION_PERK_INTERRUPT = "Interrupt";
 export const BUFF_ACTIONS = new Set([
     BUFF_ACTION_HIT,
     BUFF_ACTION_HURT,
+    BUFF_ACTION_HEAL,
     BUFF_ACTION_RETALIATE,
     BUFF_ACTION_BLOCK,
 ]);

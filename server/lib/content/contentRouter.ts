@@ -127,13 +127,17 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
 
 function addRequirement(hero: HERO, requirement: reqCd, abilityKey: string) {
     hero.cdReducers = hero.cdReducers || {};
-    let reqArray: CD_REDUCER[] | undefined;
+    let requirements: CD_REDUCER[] | undefined;
     if (requirement.requirement_attribute === "HitRequirement") {
-        reqArray = hero.cdReducers.hit = hero.cdReducers.hit || [];
+        requirements = hero.cdReducers.hit = hero.cdReducers.hit || [];
+    } else if (requirement.requirement_attribute === "HealRequirement") {
+        requirements = hero.cdReducers.heal = hero.cdReducers.heal || [];
+    } else if (requirement.requirement_attribute === "UseAbilityRequirement") {
+        requirements = hero.cdReducers.use = hero.cdReducers.use || [];
     }
-    if (reqArray) {
+    if (requirements) {
         const cdReducer: CD_REDUCER = { abilityKey, value: +requirement.max_value };
-        reqArray.push(cdReducer);
+        requirements.push(cdReducer);
     }
 }
 
