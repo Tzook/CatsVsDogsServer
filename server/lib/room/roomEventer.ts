@@ -8,7 +8,7 @@ export function roomEventer(socket: SOCK) {
         // TODO emit only to his room
         socket.broadcast.to(ROOM_NAME).emit(ROOM_EMITS.entered_room.name, {
             character: socket.char,
-            class_key: socket.heroName,
+            class: socket.heroName,
         });
 
         let roomObject = socket.adapter.rooms[ROOM_NAME];
@@ -17,7 +17,7 @@ export function roomEventer(socket: SOCK) {
                 const sock = getSocketById(socketId);
                 socket.emit(ROOM_EMITS.entered_room.name, {
                     character: sock.char,
-                    class_key: sock.heroName,
+                    class: sock.heroName,
                 });
             });
         }

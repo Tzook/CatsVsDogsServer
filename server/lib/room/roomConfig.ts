@@ -11,7 +11,7 @@ export const ROOM_EMITS = {
             character: {
                 type: "Char"
             },
-            class_key: {
+            class: {
                 type: "string"
             },
         }
