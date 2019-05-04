@@ -53,8 +53,7 @@ export function combatEventer(socket: SOCK) {
     });
 
     socket.on(SOCKETIO_EVENTS.disconnect.name, (data) => {
-        clearPlayer(socket);
-        clearCds(socket, true);
+        playerDead(socket, true);
     });
 }
 
