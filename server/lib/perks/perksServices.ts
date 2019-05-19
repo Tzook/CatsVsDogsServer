@@ -1,4 +1,4 @@
-import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL, PERK_NAME_LIFE_STEAL, PERK_NAME_PERCENT, PERK_NAME_REMOVE_BUFF, PERKS_EMITS, PERK_NAME_DURATION, DEFAULT_BUFF_DURATION, PERK_DEFAULT_BLEED_INTERVAL } from './perksConfig';
+import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL, PERK_NAME_LIFE_STEAL, PERK_NAME_PERCENT, PERK_NAME_REMOVE_BUFF, PERKS_EMITS, PERK_NAME_DURATION, DEFAULT_BUFF_DURATION, PERK_DEFAULT_BLEED_INTERVAL } from './perksConfig';
 import _ = require("underscore");
 import { hurtPlayer, playerBlocked, incrementHitCd, healPlayer, incrementHealCd } from '../combat/combatEventer';
 import { addBuff, removeBuff, hasBlockBuffAction, getRetaliateBuffAction, runHitBuffActions, runHealBuffActions, runHurtBuffActions, runBuffActionInterrupt, removeBuffs } from "../buffs/buffsEventer";
@@ -82,8 +82,8 @@ function runPerkDebuff(perks: PERKS, attacker: SOCK, target: SOCK) {
 }
 
 function runPerkBuff(perks: PERKS, attacker: SOCK, target: SOCK) {
-    if (perks[PERK_ADD_BUFF] && !target.dead) {
-        const { name } = perks[PERK_ADD_BUFF];
+    if (perks[PERK_NAME_ADD_BUFF] && !target.dead) {
+        const { name } = perks[PERK_NAME_ADD_BUFF];
         const buff = getBuff(name);
         if (isPerkActivated((buff.perks || {})[PERK_NAME_CHANCE])) {
             const options = runBuffPerks(buff, attacker, target);
