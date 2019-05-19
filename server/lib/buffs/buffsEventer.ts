@@ -9,8 +9,7 @@ export function buffsEventer(socket: SOCK) {
     socket.buffActions = {};
 }
 
-export function addBuff(attacker: SOCK, target: SOCK, buffKey: string, duration: number, { buffTimer }: ADD_BUFF_OPTIONS) {
-    const durationInMs = duration * 1000;
+export function addBuff(attacker: SOCK, target: SOCK, buffKey: string, durationInMs: number, { buffTimer }: ADD_BUFF_OPTIONS) {
     const existingBuff = target.buffs.get(buffKey);
     if (existingBuff) {
         const durationLeft = existingBuff.timeEnd - Date.now();

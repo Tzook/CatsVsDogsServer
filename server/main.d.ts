@@ -155,7 +155,6 @@ declare global {
     // Buffs
     type BUFF_OBJECT = {
         name: string
-        duration: number
         perks?: PERKS
     }
     type BUFFS = { [buffName: string]: BUFF_OBJECT }

@@ -1,4 +1,4 @@
-import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_DEFAULT_BLEED_INTERVAL, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL, PERK_NAME_LIFE_STEAL, PERK_NAME_PERCENT, PERK_NAME_REMOVE_BUFF, PERKS_EMITS } from './perksConfig';
+import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL, PERK_NAME_LIFE_STEAL, PERK_NAME_PERCENT, PERK_NAME_REMOVE_BUFF, PERKS_EMITS, PERK_NAME_DURATION, DEFAULT_BUFF_DURATION, PERK_DEFAULT_BLEED_INTERVAL } from './perksConfig';
 import _ = require("underscore");
 import { hurtPlayer, playerBlocked, incrementHitCd, healPlayer, incrementHealCd } from '../combat/combatEventer';
 import { addBuff, removeBuff, hasBlockBuffAction, getRetaliateBuffAction, runHitBuffActions, runHealBuffActions, runHurtBuffActions, runBuffActionInterrupt, removeBuffs } from "../buffs/buffsEventer";
@@ -87,7 +87,7 @@ function runPerkBuff(perks: PERKS, attacker: SOCK, target: SOCK) {
         const buff = getBuff(name);
         if (isPerkActivated((buff.perks || {})[PERK_NAME_CHANCE])) {
             const options = runBuffPerks(buff, attacker, target);
-            addBuff(attacker, target, buff.name, buff.duration, options);
+            addBuff(attacker, target, buff.name, getDuration(buff), options);
         }
     }
 }
@@ -103,7 +103,8 @@ function runBuffPerks(buff: BUFF_OBJECT, attacker: SOCK, target: SOCK): ADD_BUFF
 }
 
 function buffHandlerDot(buff: BUFF_OBJECT, dotPerks: PERKS, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {
-    let intervalTicks = buff.duration;
+    const durationInMs = getDuration(buff);
+    let intervalTicks = durationInMs / 1000;
     const bleedInterval = setInterval(() => {
         runPerkDmg(dotPerks, attacker, target, { blockable: false, retaliateable: false, buffable: false });
         if (--intervalTicks <= 0) {
@@ -111,6 +112,13 @@ function buffHandlerDot(buff: BUFF_OBJECT, dotPerks: PERKS, attacker: SOCK, targ
         }
     }, PERK_DEFAULT_BLEED_INTERVAL);
     return { buffTimer: bleedInterval };
+}
+
+function getDuration(buff: BUFF_OBJECT) {
+    const duration = buff.perks
+        ? getPerkValueWithDefault(buff.perks[PERK_NAME_DURATION], DEFAULT_BUFF_DURATION)
+        : DEFAULT_BUFF_DURATION;
+    return duration * 1000;
 }
 
 // ========

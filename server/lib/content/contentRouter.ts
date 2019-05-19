@@ -25,7 +25,6 @@ type expectedReqBody = {
     }[],
     buffs: {
         buff_key: string
-        duration: string
         perks?: reqPerk[],
     }[]
 };
@@ -75,7 +74,6 @@ function updateContent(req: Req, res: Res, next: Nex) {
     for (const reqBuff of body.buffs) {
         buffs[reqBuff.buff_key] = {
             name: reqBuff.buff_key,
-            duration: +reqBuff.duration,
         };
         if (reqBuff.perks) {
             buffs[reqBuff.buff_key].perks = {};
