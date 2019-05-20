@@ -98,7 +98,7 @@ export function incrementHealCd(socket: SOCK, counter = 1) {
     }
 }
 
-export function incrementUseCd(socket: SOCK) {
+function incrementUseCd(socket: SOCK) {
     if (socket.hero.cdReducers && socket.hero.cdReducers.use) {
         for (const cdReducer of socket.hero.cdReducers.use) {
             incrementAbilityCd(socket, cdReducer);
@@ -134,11 +134,18 @@ function getEmptyAbilityCd(socket: SOCK, abilityKey: string): CD_INSTANCE {
 }
 
 function clearCds(target: SOCK, resetAll: boolean) {
+    const cdToRemove = new Set<string>();
     for (const [abilityKey, cd] of target.cd) {
         const shouldResetCd = resetAll || target.hero.abilities[abilityKey].respawnResetCd;
-        if (shouldResetCd && cd.timer) {
-            clearTimeout(cd.timer);
+        if (shouldResetCd) {
+            if (cd.timer) {
+                clearTimeout(cd.timer);
+            }
+            cdToRemove.add(abilityKey);
         }
+    }
+    for (const abilityKey of cdToRemove) {
+        target.cd.delete(abilityKey);
     }
 }
 
