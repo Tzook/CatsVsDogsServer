@@ -4,7 +4,6 @@ import { hurtPlayer, playerBlocked, incrementHitCd, healPlayer, incrementHealCd 
 import { addBuff, removeBuff, hasBlockBuffAction, getRetaliateBuffAction, runHitBuffActions, runHealBuffActions, runHurtBuffActions, runBuffActionInterrupt, removeBuffs } from "../buffs/buffsEventer";
 import { getBuff } from "../buffs/buffsModel";
 import { getIo } from '../socketio/socketioConnect';
-import { ROOM_NAME } from '../room/roomConfig';
 
 export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
     const filteredTargets = filterTargets(perks, targets);
@@ -157,7 +156,7 @@ function getPerkPercentOrValue(perk: PERK, baseValue: number) {
 // Emits
 // ==========
 function emitPurged(attacker: SOCK, target: SOCK) {
-    getIo().to(ROOM_NAME).emit(PERKS_EMITS.purged.name, {
+    getIo().to(target.channel).emit(PERKS_EMITS.purged.name, {
         attacker_id: attacker.char._id,
         player_id: target.char._id,
     });

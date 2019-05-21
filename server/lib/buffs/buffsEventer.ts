@@ -1,6 +1,5 @@
 import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE, BUFF_ACTION_HIT, BUFF_ACTION_HURT, BUFF_ACTION_PERK_INTERRUPT, BUFF_ACTION_HEAL } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
-import { ROOM_NAME } from "../room/roomConfig";
 import { getBuff } from './buffsModel';
 import { runPerks } from '../perks/perksServices';
 
@@ -138,7 +137,7 @@ export function runBuffActionInterrupt(target: SOCK, buffKey: string, actionPerk
 // Emits
 // ==================
 function emitBuffStarted(attacker: SOCK, target: SOCK, buffKey: string) {
-    getIo().to(ROOM_NAME).emit(BUFFS_EMITS.buff_started.name, {
+    getIo().to(target.channel).emit(BUFFS_EMITS.buff_started.name, {
         player_id: target.char._id,
         attacker_id: attacker.char._id,
         buff_key: buffKey,
@@ -146,7 +145,7 @@ function emitBuffStarted(attacker: SOCK, target: SOCK, buffKey: string) {
 }
 
 function emitBuffEnded(target: SOCK, buffKey: string) {
-    getIo().to(ROOM_NAME).emit(BUFFS_EMITS.buff_ended.name, {
+    getIo().to(target.channel).emit(BUFFS_EMITS.buff_ended.name, {
         player_id: target.char._id,
         buff_key: buffKey,
     });

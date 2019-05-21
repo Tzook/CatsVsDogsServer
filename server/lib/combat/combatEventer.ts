@@ -1,5 +1,4 @@
 import { COMBAT_EVENTS, COMBAT_EMITS, RESPAWN_TIME, COOLDOWN_TIME_FORGIVENESS } from './combatConfig';
-import { ROOM_NAME } from '../room/roomConfig';
 import { emitEventError } from '../socketio/socketioEventer';
 import { getIo } from '../socketio/socketioConnect';
 import { applyPerks } from '../perks/perksServices';
@@ -23,7 +22,7 @@ export function combatEventer(socket: SOCK) {
         if (isOnCd(socket, ability_key)) {
             return emitEventError(socket, new Error(`Ability '${ability_key}' is still on cooldown.`));
         }
-        socket.broadcast.to(ROOM_NAME).emit(COMBAT_EMITS.used_ability.name, {
+        socket.broadcast.to(socket.channel).emit(COMBAT_EMITS.used_ability.name, {
             player_id: socket.char._id,
             ability_key,
         });
@@ -120,7 +119,7 @@ function incrementAbilityCd(socket: SOCK, { value, abilityKey }: CD_REDUCER, cou
     if (cd.value < 0) {
         cd.value = 0;
     }
-    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.cooldown_progress.name, {
+    getIo().to(socket.channel).emit(COMBAT_EMITS.cooldown_progress.name, {
         player_id: socket.char._id,
         ability_key: abilityKey,
         total_progress: cd.value,
@@ -165,7 +164,7 @@ function getTargets(socket: SOCK, targetIds: string[]) {
 }
 
 export function hurtPlayer(attacker: SOCK, target: SOCK, damage: number) {
-    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.hurt.name, {
+    getIo().to(target.channel).emit(COMBAT_EMITS.hurt.name, {
         player_id: target.char._id,
         attacker_id: attacker.char._id,
         damage,
@@ -179,7 +178,7 @@ export function hurtPlayer(attacker: SOCK, target: SOCK, damage: number) {
 
 export function healPlayer(attacker: SOCK, target: SOCK, healValue: number) {
     const heal = Math.min(healValue, target.hero.baseHp - target.hp);
-    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.heal.name, {
+    getIo().to(target.channel).emit(COMBAT_EMITS.heal.name, {
         player_id: target.char._id,
         attacker_id: attacker.char._id,
         heal,
@@ -188,14 +187,14 @@ export function healPlayer(attacker: SOCK, target: SOCK, healValue: number) {
 }
 
 export function playerBlocked(attacker: SOCK, target: SOCK) {
-    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.block.name, {
+    getIo().to(target.channel).emit(COMBAT_EMITS.block.name, {
         player_id: target.char._id,
         attacker_id: attacker.char._id,
     });
 }
 
 export function playerDead(target: SOCK, resetAllCd: boolean) {
-    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.dead.name, {
+    getIo().to(target.channel).emit(COMBAT_EMITS.dead.name, {
         player_id: target.char._id,
     });
     clearPlayer(target);
@@ -209,7 +208,7 @@ function clearPlayer(target: SOCK) {
 
 export function respawnPlayer(target: SOCK) {
     resetHp(target);
-    getIo().to(ROOM_NAME).emit(COMBAT_EMITS.respawn.name, {
+    getIo().to(target.channel).emit(COMBAT_EMITS.respawn.name, {
         player_id: target.char._id,
         class_key: target.hero.name,
     });

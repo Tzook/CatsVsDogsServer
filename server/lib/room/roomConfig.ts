@@ -38,3 +38,5 @@ export const ROOM_EMITS = {
 };
 
 export const ROOM_NAME = "test";
+
+export const MAX_ROOM_SIZE = 3;
