@@ -83,6 +83,7 @@ declare global {
         cd: Map<string, CD_INSTANCE>
         buffActions: BUFF_ACTIONS
         channel: string
+        currentAbility?: string
     }
 
     // User

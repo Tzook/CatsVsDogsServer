@@ -32,6 +32,9 @@ export const BUFF_ACTION_HEAL = "Condition_OnHeal";
 export const BUFF_ACTION_RETALIATE = "Retaliate";
 export const BUFF_ACTION_BLOCK = "Block";
 
+export const BUFF_ACTION_CONDITION_ABILITY = "Condition_OnUseAbility";
+
+export const BUFF_ACTION_PERK_ABILITY_TYPE = "AbilityType";
 export const BUFF_ACTION_PERK_INTERRUPT = "Interrupt";
 
 export const BUFF_ACTIONS = new Set([

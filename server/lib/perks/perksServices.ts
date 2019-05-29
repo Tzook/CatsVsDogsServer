@@ -5,11 +5,13 @@ import { addBuff, removeBuff, hasBlockBuffAction, getRetaliateBuffAction, runHit
 import { getBuff } from "../buffs/buffsModel";
 import { getIo } from '../socketio/socketioConnect';
 
-export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[]) {
+export function applyPerks(socket: SOCK, perks: PERKS, targets: SOCK[], abilityKey: string) {
     const filteredTargets = filterTargets(perks, targets);
+    socket.currentAbility = abilityKey;
     for (const target of filteredTargets) {
         runPerks(socket, target, perks);
     }
+    delete socket.currentAbility;
     // If hit any target.
     if (filteredTargets.length > 0) {
         if (perks[PERK_NAME_DMG]) {
@@ -65,7 +67,7 @@ function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK, { blockable = tr
     } else {
         dmg = getPerkValue(perks[PERK_NAME_DMG]);
         hurtPlayer(attacker, perkTarget, dmg);
-        runPerkLifeSteal(perks, attacker, perkTarget, dmg);
+        runPerkLifeSteal(perks, attacker, dmg);
     }
     if (buffable) {
         runHitBuffActions(attacker, perkTarget, dmg);

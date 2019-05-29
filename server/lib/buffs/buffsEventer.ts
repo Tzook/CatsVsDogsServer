@@ -1,4 +1,4 @@
-import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE, BUFF_ACTION_HIT, BUFF_ACTION_HURT, BUFF_ACTION_PERK_INTERRUPT, BUFF_ACTION_HEAL } from './buffsConfig';
+import { BUFFS_EMITS, BUFF_ACTIONS, BUFF_ACTION_BLOCK, BUFF_ACTION_RETALIATE, BUFF_ACTION_HIT, BUFF_ACTION_HURT, BUFF_ACTION_PERK_INTERRUPT, BUFF_ACTION_HEAL, BUFF_ACTION_CONDITION_ABILITY, BUFF_ACTION_PERK_ABILITY_TYPE } from './buffsConfig';
 import { getIo } from "../socketio/socketioConnect";
 import { getBuff } from './buffsModel';
 import { runPerks } from '../perks/perksServices';
@@ -105,23 +105,32 @@ export function getRetaliateBuffAction(target: SOCK): PERK | void {
 }
 
 export function runHitBuffActions(attacker: SOCK, target: SOCK, dmg: number): void {
-    runBuffActions(attacker, target, BUFF_ACTION_HIT, dmg);
+    runBuffActions(attacker, target, BUFF_ACTION_HIT, attacker.currentAbility, dmg);
 }
 
 export function runHealBuffActions(attacker: SOCK, target: SOCK, heal: number): void {
-    runBuffActions(attacker, target, BUFF_ACTION_HEAL, heal);
+    runBuffActions(attacker, target, BUFF_ACTION_HEAL, attacker.currentAbility, heal);
 }
 
 export function runHurtBuffActions(attacker: SOCK, target: SOCK): void {
-    runBuffActions(target, attacker, BUFF_ACTION_HURT);
+    runBuffActions(target, attacker, BUFF_ACTION_HURT, attacker.currentAbility);
 }
 
-function runBuffActions(attacker: SOCK, target: SOCK, buffActionKey: string, dmg?: number) {
+function runBuffActions(attacker: SOCK, target: SOCK, buffActionKey: string, currentAbility: string, dmg?: number) {
     const buffActions = attacker.buffActions[buffActionKey];
     if (buffActions) {
         for (const buffKey of buffActions) {
             const buff = getBuff(buffKey);
-            const { perks } = buff.perks[buffActionKey];
+            let { perks } = buff.perks[buffActionKey];
+            if (perks[BUFF_ACTION_CONDITION_ABILITY]) {
+                const onUsePerks = perks[BUFF_ACTION_CONDITION_ABILITY].perks;
+                if (!onUsePerks[BUFF_ACTION_PERK_ABILITY_TYPE] ||
+                    onUsePerks[BUFF_ACTION_PERK_ABILITY_TYPE].name !== currentAbility) {
+                    // Buff can only be activated by this ability.
+                    continue;
+                }
+                perks = onUsePerks;
+            }
             runPerks(attacker, target, perks, { retaliateable: false }, { dmg, buffKey });
         }
     }

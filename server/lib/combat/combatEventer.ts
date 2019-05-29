@@ -28,7 +28,7 @@ export function combatEventer(socket: SOCK) {
         });
         incrementUseCd(socket);
         if (hero.abilities[ability_key].activatePerks) {
-            applyPerks(socket, hero.abilities[ability_key].activatePerks, [socket]);
+            applyPerks(socket, hero.abilities[ability_key].activatePerks, [socket], ability_key);
         }
         if (hero.abilities[ability_key].cdTime) {
             setTimerCd(socket, ability_key);
@@ -48,7 +48,7 @@ export function combatEventer(socket: SOCK) {
         }
         if (hero.abilities[ability_key].hitPerks) {
             const targets = getTargets(socket, target_ids);
-            applyPerks(socket, hero.abilities[ability_key].hitPerks, targets);
+            applyPerks(socket, hero.abilities[ability_key].hitPerks, targets, ability_key);
         }
     });
 
