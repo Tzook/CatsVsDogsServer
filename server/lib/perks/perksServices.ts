@@ -31,7 +31,7 @@ export function runPerks(attacker: SOCK, target: SOCK, perks: PERKS, dmgPerkOpti
     runPerkDmg(perks, attacker, target, dmgPerkOptions);
     runPerkHeal(perks, attacker, target, dmgPerkOptions);
     runPerkBuff(perks, attacker, target);
-    runPerkLifeSteal(perks, attacker, target, dmg);
+    runPerkLifeSteal(perks, attacker, dmg);
     runBuffActionInterrupt(attacker, buffKey, perks);
 }
 
@@ -88,11 +88,11 @@ function runPerkHeal(perks: PERKS, attacker: SOCK, target: SOCK, { buffable = tr
     }
 }
 
-function runPerkLifeSteal(perks: PERKS, attacker: SOCK, target: SOCK, dmg: number) {
+function runPerkLifeSteal(perks: PERKS, attacker: SOCK, dmg: number) {
     if (!perks[PERK_NAME_LIFE_STEAL] || !dmg) {
         return;
     }
-    const perkTarget = getPerkTarget(perks[PERK_NAME_LIFE_STEAL].perks, attacker, target);
+    const perkTarget = attacker; // life steal is hardcoded always the attacker
     if (perkTarget.dead) {
         return;
     }
