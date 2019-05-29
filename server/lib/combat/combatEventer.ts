@@ -164,12 +164,13 @@ function getTargets(socket: SOCK, targetIds: string[]) {
 }
 
 export function hurtPlayer(attacker: SOCK, target: SOCK, damage: number) {
+    const hurtDamage = Math.min(damage, target.hp);
     getIo().to(target.channel).emit(COMBAT_EMITS.hurt.name, {
         player_id: target.char._id,
         attacker_id: attacker.char._id,
-        damage,
+        damage: hurtDamage,
     });
-    target.hp -= damage;
+    target.hp -= hurtDamage;
     if (target.dead) {
         playerDead(target, false);
         target.respawnTimer = setTimeout(() => respawnPlayer(target), RESPAWN_TIME);
