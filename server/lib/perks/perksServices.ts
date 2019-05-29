@@ -1,4 +1,4 @@
-import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL, PERK_NAME_LIFE_STEAL, PERK_NAME_PERCENT, PERK_NAME_REMOVE_BUFF, PERKS_EMITS, PERK_NAME_DURATION, DEFAULT_BUFF_DURATION, PERK_DEFAULT_BLEED_INTERVAL } from './perksConfig';
+import { PERK_NAME_DMG, PERK_NAME_AOE, PERK_NAME_CHANCE, PERK_NAME_ADD_BUFF, PERK_NAME_DOT, PERK_NAME_HEAL, PERK_NAME_LIFE_STEAL, PERK_NAME_PERCENT, PERK_NAME_REMOVE_BUFF, PERKS_EMITS, PERK_NAME_DURATION, DEFAULT_BUFF_DURATION, PERK_DEFAULT_BLEED_INTERVAL, PERK_NAME_TARGET, PERK_TARGET_SELF } from './perksConfig';
 import _ = require("underscore");
 import { hurtPlayer, playerBlocked, incrementHitCd, healPlayer, incrementHealCd } from '../combat/combatEventer';
 import { addBuff, removeBuff, hasBlockBuffAction, getRetaliateBuffAction, runHitBuffActions, runHealBuffActions, runHurtBuffActions, runBuffActionInterrupt, removeBuffs } from "../buffs/buffsEventer";
@@ -35,60 +35,93 @@ export function runPerks(attacker: SOCK, target: SOCK, perks: PERKS, dmgPerkOpti
     runBuffActionInterrupt(attacker, buffKey, perks);
 }
 
+function runPerkDebuff(perks: PERKS, attacker: SOCK, target: SOCK) {
+    if (!perks[PERK_NAME_REMOVE_BUFF]) {
+        return;
+    }
+    const perkTarget = getPerkTarget(perks[PERK_NAME_REMOVE_BUFF].perks, attacker, target);
+    if (perkTarget.dead) {
+        return;
+    }
+    removeBuffs(perkTarget);
+    emitPurged(attacker, perkTarget);
+}
+
 function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK, { blockable = true, retaliateable = true, buffable = true }: DMG_PERK_OPTIONS) {
-    if (perks[PERK_NAME_DMG] && !target.dead) {
-        let retaliatePerk = retaliateable && getRetaliateBuffAction(target);
-        if (retaliatePerk) {
-            runPerkDmg(retaliatePerk.perks, target, attacker, { retaliateable: false });
-        }
-        let dmg = 0;
-        if (blockable && hasBlockBuffAction(target)) {
-            playerBlocked(attacker, target);
-        } else {
-            dmg = getPerkValue(perks[PERK_NAME_DMG]);
-            hurtPlayer(attacker, target, dmg);
-            runPerkLifeSteal(perks, attacker, target, dmg);
-        }
-        if (buffable) {
-            runHitBuffActions(attacker, target, dmg);
-            runHurtBuffActions(attacker, target);
-        }
+    if (!perks[PERK_NAME_DMG]) {
+        return;
+    }
+    const perkTarget = getPerkTarget(perks[PERK_NAME_DMG].perks, attacker, target);
+    if (perkTarget.dead) {
+        return;
+    }
+    let retaliatePerk = retaliateable && getRetaliateBuffAction(perkTarget);
+    if (retaliatePerk) {
+        runPerkDmg(retaliatePerk.perks, perkTarget, attacker, { retaliateable: false });
+    }
+    let dmg = 0;
+    if (blockable && hasBlockBuffAction(perkTarget)) {
+        playerBlocked(attacker, perkTarget);
+    } else {
+        dmg = getPerkValue(perks[PERK_NAME_DMG]);
+        hurtPlayer(attacker, perkTarget, dmg);
+        runPerkLifeSteal(perks, attacker, perkTarget, dmg);
+    }
+    if (buffable) {
+        runHitBuffActions(attacker, perkTarget, dmg);
+        runHurtBuffActions(attacker, perkTarget);
     }
 }
 
 function runPerkHeal(perks: PERKS, attacker: SOCK, target: SOCK, { buffable = true }: DMG_PERK_OPTIONS) {
-    if (perks[PERK_NAME_HEAL] && !target.dead) {
-        const heal = getPerkValue(perks[PERK_NAME_HEAL]);
-        healPlayer(attacker, target, heal);
-        if (buffable) {
-            runHealBuffActions(attacker, target, heal);
-        }
+    if (!perks[PERK_NAME_HEAL]) {
+        return;
+    }
+    const perkTarget = getPerkTarget(perks[PERK_NAME_HEAL].perks, attacker, target);
+    if (perkTarget.dead) {
+        return;
+    }
+    const heal = getPerkValue(perks[PERK_NAME_HEAL]);
+    healPlayer(attacker, perkTarget, heal);
+    if (buffable) {
+        runHealBuffActions(attacker, perkTarget, heal);
     }
 }
 
 function runPerkLifeSteal(perks: PERKS, attacker: SOCK, target: SOCK, dmg: number) {
-    if (perks[PERK_NAME_LIFE_STEAL] && !attacker.dead && dmg) {
-        const heal = getPerkPercentOrValue(perks[PERK_NAME_LIFE_STEAL], dmg);
-        healPlayer(target, attacker, heal);
+    if (!perks[PERK_NAME_LIFE_STEAL] || !dmg) {
+        return;
     }
-}
-
-function runPerkDebuff(perks: PERKS, attacker: SOCK, target: SOCK) {
-    if (perks[PERK_NAME_REMOVE_BUFF] && !target.dead) {
-        removeBuffs(target);
-        emitPurged(attacker, target);
+    const perkTarget = getPerkTarget(perks[PERK_NAME_LIFE_STEAL].perks, attacker, target);
+    if (perkTarget.dead) {
+        return;
     }
+    const heal = getPerkPercentOrValue(perks[PERK_NAME_LIFE_STEAL], dmg);
+    healPlayer(attacker, perkTarget, heal);
 }
 
 function runPerkBuff(perks: PERKS, attacker: SOCK, target: SOCK) {
-    if (perks[PERK_NAME_ADD_BUFF] && !target.dead) {
-        const { name } = perks[PERK_NAME_ADD_BUFF];
-        const buff = getBuff(name);
-        if (isPerkActivated((buff.perks || {})[PERK_NAME_CHANCE])) {
-            const options = runBuffPerks(buff, attacker, target);
-            addBuff(attacker, target, buff.name, getDuration(buff), options);
-        }
+    if (!perks[PERK_NAME_ADD_BUFF]) {
+        return;
     }
+    const perkTarget = getPerkTarget(perks[PERK_NAME_ADD_BUFF].perks, attacker, target);
+    if (perkTarget.dead) {
+        return;
+    }
+    const buff = getBuff(perks[PERK_NAME_ADD_BUFF].name);
+    const buffPerks = buff.perks || {};
+    if (!isPerkActivated(buffPerks[PERK_NAME_CHANCE])) {
+        return;
+    }
+    const options = runBuffPerks(buff, attacker, perkTarget);
+    addBuff(attacker, perkTarget, buff.name, getDuration(buff), options);
+}
+
+function getPerkTarget(perks: PERKS = {}, attacker: SOCK, target: SOCK): SOCK {
+    if (perks[PERK_NAME_TARGET] && perks[PERK_NAME_TARGET].name === PERK_TARGET_SELF) {
+        return attacker;
+    }
+    return target;
 }
 
 function runBuffPerks(buff: BUFF_OBJECT, attacker: SOCK, target: SOCK): ADD_BUFF_OPTIONS {

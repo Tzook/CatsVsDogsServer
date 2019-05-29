@@ -137,6 +137,7 @@ export function runBuffActionInterrupt(target: SOCK, buffKey: string, actionPerk
 // Emits
 // ==================
 function emitBuffStarted(attacker: SOCK, target: SOCK, buffKey: string) {
+    console.info("Applied buff", target.heroName);
     getIo().to(target.channel).emit(BUFFS_EMITS.buff_started.name, {
         player_id: target.char._id,
         attacker_id: attacker.char._id,
