@@ -116,6 +116,8 @@ function runPerkBuff(perks: PERKS, attacker: SOCK, target: SOCK) {
         return;
     }
     const options = runBuffPerks(buff, attacker, perkTarget);
+    // TODO run buff perks
+    // TODO soul bound perks
     addBuff(attacker, perkTarget, buff.name, getDuration(buff), options);
 }
 
