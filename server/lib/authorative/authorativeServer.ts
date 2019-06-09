@@ -6,7 +6,7 @@ export function start() {
         console.log("~~~ Timer ~~~");
         const unityProcess = spawn("build/cvd.x86_64");
 
-        unityProcess.stdout.on('data', (data) => console.log("== Process stdout ==", data));
-        unityProcess.stderr.on('data', (data) => console.log("== Process stderr ==", data));
+        unityProcess.stdout.pipe(process.stdout);
+        unityProcess.stderr.pipe(process.stderr);
     }, 5000);
 }
