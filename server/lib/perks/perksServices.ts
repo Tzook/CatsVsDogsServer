@@ -59,7 +59,7 @@ function runPerkDmg(perks: PERKS, attacker: SOCK, target: SOCK, { blockable = tr
     }
     let retaliatePerk = retaliateable && getRetaliateBuffAction(perkTarget);
     if (retaliatePerk) {
-        runPerkDmg(retaliatePerk.perks, perkTarget, attacker, { retaliateable: false });
+        runPerks(perkTarget, attacker, retaliatePerk.perks, { retaliateable: false });
     }
     let dmg = 0;
     if (blockable && hasBlockBuffAction(perkTarget)) {
