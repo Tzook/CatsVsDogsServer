@@ -6,7 +6,7 @@
     "scripts": {
         "start": "gulp watch",
         "// postinstall-explanation": "this task is run by heroku after deploying, so it compiles the output files",
-        "postinstall": "gulp compile"
+        "postinstall": "gulp compile && chmod a+x -R build"
     },
     "dependencies": {
         "body-parser": "1.18.3",
