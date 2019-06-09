@@ -12,7 +12,6 @@ import { sendError } from "../common/send";
 import { bootstrapSocketio } from "../socketio/socketioBootstrap";
 import { logger, errorer } from '../common/log';
 import { warmup } from "./warmups";
-import { start } from "../authorative/authorativeServer";
 
 export function bootstrap() {
     const app = express();
@@ -40,7 +39,6 @@ export function bootstrap() {
             startRouters(app);
             bootstrapSocketio(io);
             app.use(sendError);
-            start();
         }).catch((error) => {
             errorer("Failed warming up the server", error);
         });
