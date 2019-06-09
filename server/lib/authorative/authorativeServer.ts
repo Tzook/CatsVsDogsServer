@@ -1,11 +1,11 @@
 import { spawn } from 'child_process';
+import { isProduction } from '../bootstrap/env';
 
 export function start() {
-    console.log("~~~ Starting authorative server ~~~");
-    setTimeout(() => {
-        console.log("~~~ Timer ~~~");
+    if (isProduction()) {
+        console.log("~~~ Starting authorative server ~~~");
         spawn("build/cvd.x86_64", {
             detached: true,
         });
-    }, 5000);
+    }
 }
