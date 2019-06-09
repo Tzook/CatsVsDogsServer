@@ -33,6 +33,7 @@ type reqAbility = {
     ability_on_hit?: reqAbility,
     ability_on_left?: reqAbility,
     ability_on_fall?: reqAbility,
+    ability_on_finish?: reqAbility,
     perks?: reqPerk[],
     perks_on_hit?: reqPerk[],
     cooldown: string,
@@ -120,6 +121,9 @@ function addAbility(hero: HERO, reqAbility: reqAbility) {
     }
     if (reqAbility.ability_on_fall) {
         addAbility(hero, reqAbility.ability_on_fall);
+    }
+    if (reqAbility.ability_on_finish) {
+        addAbility(hero, reqAbility.ability_on_finish);
     }
 }
 
