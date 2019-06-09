@@ -12,7 +12,7 @@ import { sendError } from "../common/send";
 import { bootstrapSocketio } from "../socketio/socketioBootstrap";
 import { logger, errorer } from '../common/log';
 import { warmup } from "./warmups";
-import {execFile} from 'child_process';
+import { start } from "../authorative/authorativeServer";
 
 export function bootstrap() {
     const app = express();
@@ -40,10 +40,7 @@ export function bootstrap() {
             startRouters(app);
             bootstrapSocketio(io);
             app.use(sendError);
-            setTimeout(() => {
-                console.log("~~~ Starting authorative server ~~~");
-                execFile("build/cvd.x86_64");
-            }, 5000);
+            start();
         }).catch((error) => {
             errorer("Failed warming up the server", error);
         });
