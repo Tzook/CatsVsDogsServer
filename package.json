@@ -28,7 +28,7 @@
         "passport.socketio": "3.7.0",
         "socket.io": "2.2.0",
         "typescript": "3.2.2",
-        "underscore": "1.9.1"
+        "underscore": "1.12.1"
     },
     "engines": {
         "node": "10.14.1",
